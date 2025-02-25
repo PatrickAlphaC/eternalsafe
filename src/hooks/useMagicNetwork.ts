@@ -3,7 +3,8 @@ import { useSearchParams } from 'next/navigation'
 import { useAppDispatch } from '@/store'
 import { setRpc } from '@/store/settingsSlice'
 import { addChain } from '@/store/chainsSlice'
-import { type ChainInfo, type RPC_AUTHENTICATION } from '@safe-global/safe-gateway-typescript-sdk'
+import type { ChainInfo } from '@/store/chainsSlice'
+import { type RPC_AUTHENTICATION } from '@safe-global/safe-gateway-typescript-sdk'
 import useChainId from '@/hooks/useChainId'
 import useChains from './useChains'
 import { showNotification } from '@/store/notificationsSlice'
@@ -17,8 +18,9 @@ export const useMagicNetwork = (): void => {
   useEffect(() => {
     // Get params
     const chainIdParam = searchParams.get('chainId')
+    const chainName = searchParams.get('chain')
     const rpcUrl = searchParams.get('rpc')
-    const shortName = searchParams.get('chain')
+    const shortName = searchParams.get('shortName')
     const currencyName = searchParams.get('currency')
     const currencySymbol = searchParams.get('symbol')
     const currencyLogo = searchParams.get('logo')
@@ -27,8 +29,8 @@ export const useMagicNetwork = (): void => {
     const l2 = searchParams.get('l2')
     const isTestnet = searchParams.get('testnet')
 
-    // Return if no RPC param or chainId
-    if (!rpcUrl || !chainIdParam) return
+    // Return if no RPC param, chainId or chainName
+    if (!rpcUrl || !chainIdParam || !chainName) return
 
     // Check if chain already exists in supported chains
     const existingChain = supportedChains.configs.find((chain) => chain.chainId === chainIdParam)
@@ -39,7 +41,8 @@ export const useMagicNetwork = (): void => {
         const missingParams = [
           !currencyName ? 'currency' : '',
           !currencySymbol ? 'symbol' : '',
-          !shortName ? 'chain' : '',
+          !shortName ? 'shortName' : '',
+          !chainName ? 'chain' : '',
         ]
           .filter(Boolean)
           .join(', ')
@@ -54,11 +57,11 @@ export const useMagicNetwork = (): void => {
       }
 
       // Create a new chain configuration
-      // @ts-ignore - custom is not a valid property in ChainInfo
       const newChain = {
         custom: true,
         chainId: chainIdParam,
-        chainName: currencyName,
+        chainName,
+        shortName,
         description: '',
         chainLogoUri: currencyLogo || null,
         l2: l2 === 'true',
@@ -92,7 +95,8 @@ export const useMagicNetwork = (): void => {
           authentication: 'NO_AUTH' as RPC_AUTHENTICATION,
           value: decodeURIComponent(rpcUrl),
         },
-        shortName,
+        transactionService: '',
+        gasPrice: [],
       } as ChainInfo
 
       // Add the chain to Redux store
