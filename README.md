@@ -5,7 +5,7 @@
 
 Eternal Safe is a decentralized fork of [Safe{Wallet}](https://github.com/safe-global/safe-wallet-monorepo), forked at v1.26.2. Funded by the [Safe Grants Program](https://app.charmverse.io/safe-grants-program/page-005239065690887612).
 
-The latest version is always accesible at [https://eternalsafe.eth.limo](https://eternalsafe.eth.limo). For the IPFS CID or pinned ENS subdomain, please check the [latest release](https://github.com/eternalsafe/wallet/releases/latest).
+The latest version is always accessible at [https://eternalsafe.eth.limo](https://eternalsafe.eth.limo). For the IPFS CID or pinned ENS subdomain, please check the [latest release](https://github.com/eternalsafe/wallet/releases/latest).
 
 ## Differences from Safe{Wallet}
 
@@ -30,6 +30,7 @@ https://eternalsafe.eth.limo?chainId=100&rpc=https%3A%2F%2Frpc.gnosis.gateway.fm
 ```
 
 Required URL parameters:
+
 - `chainId`: The chain ID of the network
 - `chain`: The short name of the network (e.g. 'eth')
 - `rpc`: The RPC URL (must be URL-encoded)
@@ -37,6 +38,7 @@ Required URL parameters:
 - `symbol`: The symbol of the native currency
 
 Optional URL parameters:
+
 - `logo`: URL to the currency logo image (URL-encoded)
 - `expAddr`: Block explorer URL template for addresses (URL-encoded)
 - `expTx`: Block explorer URL template for transactions (URL-encoded)
