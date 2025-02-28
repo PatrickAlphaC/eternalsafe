@@ -7,6 +7,7 @@ Eternal Safe is a decentralized fork of [Safe{Wallet}](https://github.com/safe-g
 
 - The latest tagged version is always accessible at [https://eternalsafe.eth.limo](https://eternalsafe.eth.limo).
   - For the IPFS CID or pinned ENS subdomain, please check the [latest release](https://github.com/eternalsafe/wallet/releases/latest).
+  - An expermiental endpoint is available at [https://eternalsafe-eth.ipns.inbrowser.link](https://eternalsafe-eth.ipns.inbrowser.link) - this [fetches and verifies client-side](https://inbrowser.link/) the IPFS content
 - The latest commit on the `eternalsafe` branch is always accessible at [https://eternalsafe.vercel.app](https://eternalsafe.vercel.app).
 
 ## Differences from Safe{Wallet}
