@@ -5,9 +5,11 @@
 
 Eternal Safe is a decentralized fork of [Safe{Wallet}](https://github.com/safe-global/safe-wallet-monorepo), forked at v1.26.2. Funded by the [Safe Grants Program](https://app.charmverse.io/safe-grants-program/page-005239065690887612).
 
-- The latest tagged version is always accessible at [https://eternalsafe.eth.limo](https://eternalsafe.eth.limo).
-  - For the IPFS CID or pinned ENS subdomain, please check the [latest release](https://github.com/eternalsafe/wallet/releases/latest).
-  - An expermiental endpoint is available at [https://eternalsafe-eth.ipns.inbrowser.link](https://eternalsafe-eth.ipns.inbrowser.link) - this [fetches and verifies client-side](https://inbrowser.link/) the IPFS content
+- The latest released version is always accessible at [https://eternalsafe.eth](https://eternalsafe.eth). If your browser doesn't support ENS, you can use alternatives below with different privacy trade-offs:
+  - [https://eternalsafe.eth.limo](https://eternalsafe.eth.limo) - centralized ENS resolution. 
+  - [https://eternalsafe-eth.ipns.inbrowser.link](https://eternalsafe-eth.ipns.inbrowser.link) - this [fetches and verifies client-side](https://inbrowser.link/) the IPFS content.
+  - [https://eternalsafe.earthfast.app](https://eternalsafe.earthfast.app) - [EarthFast (an IPFS alternative)](https://earthfast.com) hosts a mirror. 
+- For the IPFS CID or pinned ENS subdomain, please check the [latest release](https://github.com/eternalsafe/wallet/releases/latest).
 - The latest commit on the `eternalsafe` branch is always accessible at [https://eternalsafe.vercel.app](https://eternalsafe.vercel.app).
 
 ## Differences from Safe{Wallet}
