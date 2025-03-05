@@ -9,7 +9,7 @@ describe('FallbackHandler', () => {
   beforeEach(() => {
     jest.clearAllMocks()
 
-    // TODO(devanon): Re-enable when the Transaction Builder is ready
+    // TODO(eternalsafe): Re-enable when the Transaction Builder is ready
     // jest.spyOn(useTxBuilderHook, 'useTxBuilderApp').mockImplementation(() => ({
     //   link: { href: 'https://mock.link/tx-builder' },
     // }))
@@ -123,12 +123,12 @@ describe('FallbackHandler', () => {
             new RegExp('Eternal Safe may not work correctly as no fallback handler is currently set.'),
           ),
         ).toBeInTheDocument()
-        // TODO(devanon): Re-enable when the Transaction Builder is ready
+        // TODO(eternalsafe): Re-enable when the Transaction Builder is ready
         // expect(fbHandler.queryByText('Transaction Builder')).toBeInTheDocument()
       })
     })
 
-    // TODO(devanon): Re-enable when the Transaction Builder is ready
+    // TODO(eternalsafe): Re-enable when the Transaction Builder is ready
     // it('should conditionally append the Transaction Builder link', async () => {
     //   jest.spyOn(useTxBuilderHook, 'useTxBuilderApp').mockImplementation(() => undefined)
 
@@ -184,7 +184,7 @@ describe('FallbackHandler', () => {
 
       await waitFor(() => {
         expect(fbHandler.queryByText(new RegExp('An unofficial fallback handler is currently set.')))
-        // TODO(devanon): Re-enable when the Transaction Builder is ready
+        // TODO(eternalsafe): Re-enable when the Transaction Builder is ready
         // expect(fbHandler.queryByText('Transaction Builder')).toBeInTheDocument()
       })
     })

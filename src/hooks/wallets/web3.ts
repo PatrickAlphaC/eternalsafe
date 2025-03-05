@@ -8,7 +8,7 @@ export const createWeb3ReadOnly = (customRpc: string): JsonRpcProvider => {
   return new JsonRpcProvider({ url: customRpc, timeout: 10_000 })
 }
 
-export const createMultiWeb3ReadOnly = (customRpc: string, network: Network): MulticallProvider => {
+export const createMultiWeb3ReadOnly = (customRpc: string, network: Network): MulticallProvider<JsonRpcProvider> => {
   return MulticallWrapper.wrap(new JsonRpcProvider(customRpc, network), 50)
 }
 
@@ -16,7 +16,7 @@ export const createWeb3 = (walletProvider: EIP1193Provider): Web3Provider => {
   return new Web3Provider(walletProvider)
 }
 
-export const { setStore: setWeb3, useStore: useWeb3 } = new ExternalStore<Web3Provider>()
+export const { setStore: setWeb3, useStore: useWeb3 } = new ExternalStore<MulticallProvider<Web3Provider>>()
 
 export const {
   getStore: getWeb3ReadOnly,
@@ -28,7 +28,7 @@ export const {
   getStore: getMultiWeb3ReadOnly,
   setStore: setMultiWeb3ReadOnly,
   useStore: useMultiWeb3ReadOnly,
-} = new ExternalStore<MulticallProvider>()
+} = new ExternalStore<MulticallProvider<Web3Provider | JsonRpcProvider>>()
 
 export const getUserNonce = async (userAddress: string): Promise<number> => {
   const web3 = getWeb3ReadOnly()

@@ -7,8 +7,10 @@ import { selectRpc } from '@/store/settingsSlice'
 import LoadRPCUrl from '@/components/welcome/WelcomeLogin/LoadRPCUrl'
 import { CHAINLIST_URL } from '@/config/constants'
 import { useEffect, useState } from 'react'
+import { useWeb3 } from '@/hooks/wallets/web3'
 
 const WelcomeLogin = () => {
+  const web3 = useWeb3()
   const chain = useCurrentChain()
   const customRpc = useAppSelector(selectRpc)
   const customRpcUrl = chain ? customRpc?.[chain.chainId] : undefined
@@ -29,18 +31,20 @@ const WelcomeLogin = () => {
         <Typography variant="h3" mt="auto" pt={5} fontWeight={700}>
           Eternal Safe
         </Typography>
-        {customRpcUrl && !forceShowRpcInput ? (
+        {/* TODO(eternalsafe): Gracefully handle the web3 variable loading in after sometime */}
+        {(web3 || customRpcUrl) && !forceShowRpcInput ? (
           <>
             <Typography mb={2} textAlign="center">
               Eternal Safe does not yet support creating a Safe, you must have one already created.
             </Typography>
             <LoadSafe />
-            {/* TODO(devanon): Allow import of data here */}
+            {/* TODO(eternalsafe): Allow import of data here */}
           </>
         ) : chain ? (
           <>
             <Typography textAlign="center">
-              To get started you must provide a RPC URL for the {chain.chainName} network.
+              To get started you must connect a wallet on {chain.chainName} or provide a RPC URL for the{' '}
+              {chain.chainName} network.
               <br />
               <br />
               For best performance we recommend using a private RPC URL. Public URLs can be found on{' '}
@@ -61,11 +65,9 @@ const WelcomeLogin = () => {
         )}
 
         <Typography variant="subtitle2" textAlign="center" mt="auto" pt={3}>
-          {customRpcUrl && (
-            <Link type="button" component="button" onClick={toggleShowRpcInput} color="primary">
-              {forceShowRpcInput ? 'Close' : 'Open'} RPC URL input
-            </Link>
-          )}
+          <Link type="button" component="button" onClick={toggleShowRpcInput} color="primary">
+            {forceShowRpcInput ? 'Close' : 'Open'} RPC URL input
+          </Link>
         </Typography>
       </Box>
     </Paper>

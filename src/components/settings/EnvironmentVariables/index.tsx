@@ -37,7 +37,7 @@ const EnvironmentVariables = () => {
   const formMethods = useForm<EnvVariablesFormData>({
     mode: 'onChange',
     values: {
-      [EnvVariablesField.rpc]: settings.env?.rpc[chainId] ?? chain?.publicRpcUri.value ?? '',
+      [EnvVariablesField.rpc]: settings.env?.rpc[chainId] ?? '',
       [EnvVariablesField.ipfs]: settings.env?.ipfs ?? '',
       [EnvVariablesField.tenderlyOrgName]: settings.env?.tenderly.orgName ?? '',
       [EnvVariablesField.tenderlyProjectName]: settings.env?.tenderly.projectName ?? '',
@@ -66,10 +66,12 @@ const EnvironmentVariables = () => {
   }, [tenderlyOrgName, tenderlyProjectName, tenderlyToken])
 
   const onSubmit = handleSubmit((data) => {
+    const rpcValue = data[EnvVariablesField.rpc].trim() === '' ? undefined : data[EnvVariablesField.rpc]
+
     dispatch(
       setRpc({
         chainId,
-        rpc: data[EnvVariablesField.rpc],
+        rpc: rpcValue,
       }),
     )
 
@@ -149,7 +151,7 @@ const EnvironmentVariables = () => {
               </Typography>
 
               <TextField
-                {...register(EnvVariablesField.rpc, { required: true })}
+                {...register(EnvVariablesField.rpc)}
                 variant="outlined"
                 type="url"
                 InputProps={{
@@ -174,7 +176,6 @@ const EnvironmentVariables = () => {
                   ),
                 }}
                 fullWidth
-                required
               />
 
               <Typography fontWeight={700} mb={2} mt={3}>

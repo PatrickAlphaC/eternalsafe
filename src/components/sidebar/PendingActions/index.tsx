@@ -11,7 +11,7 @@ import css from './styles.module.css'
 // import classnames from 'classnames'
 import { AppRoutes } from '@/config/routes'
 
-// TODO(devanon): Re-add this after refactoring the stored queue to load all transactions at the same time
+// TODO(eternalsafe): Re-add this after refactoring the stored queue to load all transactions at the same time
 const PendingActionButtons = ({
   totalQueued,
   totalToSign,

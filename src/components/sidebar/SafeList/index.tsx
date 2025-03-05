@@ -71,7 +71,7 @@ const SafeList = ({ closeDrawer }: { closeDrawer?: () => void }): ReactElement =
 
         {!isWelcomePage && (
           <Link
-            href={{ pathname: AppRoutes.welcome.index, query: { chain: currentChain?.shortName } }}
+            href={{ pathname: AppRoutes.newSafe.load, query: { chain: currentChain?.shortName } }}
             passHref
             legacyBehavior
           >
