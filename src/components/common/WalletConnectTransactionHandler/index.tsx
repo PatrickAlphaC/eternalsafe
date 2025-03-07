@@ -62,22 +62,26 @@ const WalletConnectTxContent = () => {
 
   return (
     <>
-      <PageHeader 
-        title="WalletConnect Transaction Request" 
+      <PageHeader
+        title="WalletConnect Transaction Request"
         action={
-          <Box sx={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            justifyContent: 'space-between',
-            width: '100%'
-          }}>
-            <Box sx={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              gap: 2,
-              color: 'text.secondary',
-              fontSize: '14px'
-            }}>
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              width: '100%',
+            }}
+          >
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 2,
+                color: 'text.secondary',
+                fontSize: '14px',
+              }}
+            >
               A dApp is requesting to submit a transaction through WalletConnect
             </Box>
           </Box>
