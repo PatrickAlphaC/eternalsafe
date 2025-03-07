@@ -14,6 +14,8 @@ export type EnvState = {
     [chainId: string]: string
   }
   ipfs: string
+  walletConnectApiKey: string
+  walletConnectPairingCode: string
 }
 
 export enum TOKEN_LISTS {
@@ -60,6 +62,8 @@ export const initialState: SettingsState = {
       accessToken: '',
     },
     ipfs: '',
+    walletConnectApiKey: '',
+    walletConnectPairingCode: '',
   },
   signing: {
     onChainSigning: false,
@@ -106,6 +110,12 @@ export const settingsSlice = createSlice({
     setTenderly: (state, { payload }: PayloadAction<EnvState['tenderly']>) => {
       state.env.tenderly = merge({}, state.env.tenderly, payload)
     },
+    setWalletConnectApiKey: (state, { payload }: PayloadAction<EnvState['walletConnectApiKey']>) => {
+      state.env.walletConnectApiKey = payload
+    },
+    setWalletConnectPairingCode: (state, { payload }: PayloadAction<EnvState['walletConnectPairingCode']>) => {
+      state.env.walletConnectPairingCode = payload
+    },
     setOnChainSigning: (state, { payload }: PayloadAction<boolean>) => {
       state.signing.onChainSigning = payload
     },
@@ -127,6 +137,8 @@ export const {
   setRpc,
   setIPFS,
   setTenderly,
+  setWalletConnectApiKey,
+  setWalletConnectPairingCode,
   setOnChainSigning,
   setTransactionExecution,
 } = settingsSlice.actions
@@ -146,5 +158,12 @@ export const selectRpc = createSelector(selectSettings, (settings) => settings.e
 export const selectIPFS = createSelector(selectSettings, (settings) => settings.env.ipfs)
 
 export const selectTenderly = createSelector(selectSettings, (settings) => settings.env.tenderly)
+
+export const selectWalletConnectApiKey = createSelector(selectSettings, (settings) => settings.env.walletConnectApiKey)
+
+export const selectWalletConnectPairingCode = createSelector(
+  selectSettings,
+  (settings) => settings.env.walletConnectPairingCode,
+)
 
 export const selectOnChainSigning = createSelector(selectSettings, (settings) => settings.signing.onChainSigning)
