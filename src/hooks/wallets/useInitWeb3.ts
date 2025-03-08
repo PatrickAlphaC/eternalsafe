@@ -37,7 +37,7 @@ export const useInitWeb3 = () => {
       return
     }
     if (!customRpcUrl) {
-      if (!wallet && !web3) {
+      if (!wallet) {
         setWeb3(undefined)
         setWeb3ReadOnly(undefined)
         setMultiWeb3ReadOnly(undefined)
