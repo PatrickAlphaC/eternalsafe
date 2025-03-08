@@ -30,6 +30,7 @@
   },
   "resolutions": {
     "@solana/web3.js": "^1.87.7",
+    "@web3-onboard/common": "^2.4.1",
     "@web3-onboard/trezor/**/protobufjs": "^7.2.4",
     "crypto-es": "^2.1.0",
     "crypto-js": "^4.2.0"
@@ -60,7 +61,7 @@
     "@walletconnect/utils": "^2.19.0",
     "@walletconnect/web3wallet": "^1.9.5",
     "@web3-onboard/coinbase": "^2.2.6",
-    "@web3-onboard/core": "^2.21.2",
+    "@web3-onboard/core": "^2.24.0",
     "@web3-onboard/injected-wallets": "^2.10.7",
     "@web3-onboard/keystone": "^2.3.7",
     "@web3-onboard/ledger": "2.3.2",
@@ -70,7 +71,7 @@
     "bn.js": "^5.2.1",
     "classnames": "^2.3.1",
     "date-fns": "^2.30.0",
-    "ethers": "5.7.2",
+    "ethers": "5.8.0",
     "ethers-multicall-provider": "3.1.2",
     "exponential-backoff": "^3.1.0",
     "framer-motion": "^10.13.1",
