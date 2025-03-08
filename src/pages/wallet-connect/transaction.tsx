@@ -8,18 +8,13 @@ import SignOrExecuteForm from '@/components/tx/SignOrExecuteForm'
 import PageHeader from '@/components/common/PageHeader'
 import { AppRoutes } from '@/config/routes'
 
-// Component that uses the SafeTxContext directly
 const WalletConnectTxContent = () => {
   const router = useRouter()
   const { pendingRequest, approveRequest, rejectRequest } = useWalletConnectContext()
   const { setSafeTx, setSafeTxError, safeTx, safeTxError } = useContext(SafeTxContext)
 
-  // No debug logs to avoid potential issues
-
-  // Redirect to home if there's no pending request
   useEffect(() => {
     if (!pendingRequest || pendingRequest.params.request.method !== 'eth_sendTransaction') {
-      // Redirect to home page with the same query parameters
       router.push({
         pathname: AppRoutes.index,
         query: router.query,
@@ -27,7 +22,6 @@ const WalletConnectTxContent = () => {
     }
   }, [pendingRequest, router])
 
-  // Create a SafeTransaction from the WalletConnect request and set it in the context
   useEffect(() => {
     const createSafeTx = async () => {
       if (!pendingRequest || pendingRequest.params.request.method !== 'eth_sendTransaction') {
@@ -40,7 +34,6 @@ const WalletConnectTxContent = () => {
           throw new Error('No transaction parameters provided')
         }
 
-        // Create a SafeTransaction from the transaction parameters
         const tx = await createTx({
           to: txParams.to,
           value: txParams.value || '0',
@@ -48,7 +41,6 @@ const WalletConnectTxContent = () => {
           operation: 0, // Call
         })
 
-        // Set the transaction in the SafeTxContext
         setSafeTx(tx)
       } catch (err) {
         console.error('Failed to create SafeTransaction:', err)
@@ -59,7 +51,6 @@ const WalletConnectTxContent = () => {
     createSafeTx()
   }, [pendingRequest, setSafeTx, setSafeTxError])
 
-  // Helper function to redirect back to the original page with query params
   const redirectToOriginalPage = () => {
     router.push({
       pathname: AppRoutes.index,
@@ -69,10 +60,7 @@ const WalletConnectTxContent = () => {
 
   const handleSubmit = async (txId: string, isExecuted?: boolean) => {
     try {
-      // The transaction was successfully submitted to the Safe
-      // Now we need to approve the WalletConnect request
       await approveRequest(txId)
-      // Redirect to home after successful submission, preserving query params
       redirectToOriginalPage()
     } catch (err) {
       console.error('Failed to approve WalletConnect request:', err)
@@ -83,7 +71,6 @@ const WalletConnectTxContent = () => {
   const handleReject = async () => {
     try {
       await rejectRequest('User rejected the transaction')
-      // Redirect to home after rejection, preserving query params
       redirectToOriginalPage()
     } catch (err) {
       console.error('Failed to reject WalletConnect request:', err)
@@ -136,11 +123,8 @@ const WalletConnectTxContent = () => {
   )
 }
 
-// Wrapper component that provides the SafeTxContext
 const WalletConnectTransactionPage = () => {
   const router = useRouter()
-  // Remove all debug logs and URL manipulation that was causing infinite loops
-  // The sidebar visibility will be handled differently
 
   return (
     <SafeTxProvider>
@@ -148,8 +132,5 @@ const WalletConnectTransactionPage = () => {
     </SafeTxProvider>
   )
 }
-
-// Make sure this page is not in the NO_SIDEBAR_ROUTES list in useIsSidebarRoute.ts
-// The sidebar will be shown as long as there's a "safe" query parameter
 
 export default WalletConnectTransactionPage

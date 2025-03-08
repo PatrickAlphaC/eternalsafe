@@ -14,7 +14,7 @@ import { TxModalContext } from '@/components/tx-flow'
 const PageLayout = ({ pathname, children }: { pathname: string; children: ReactElement }): ReactElement => {
   const router = useRouter()
   const isSidebarRoute = useIsSidebarRoute()
-  const [noSidebar, setNoSidebar] = useState<boolean>(!isSidebarRoute)
+  const [noSidebar, setNoSidebar] = useState<boolean>(isSidebarRoute)
   const [isSidebarOpen, setSidebarOpen] = useState<boolean>(true)
   const hideSidebar = noSidebar || !isSidebarOpen
   const { setFullWidth } = useContext(TxModalContext)
