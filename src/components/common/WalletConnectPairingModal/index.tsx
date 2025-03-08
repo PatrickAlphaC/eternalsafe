@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import {
   Button,
   TextField,
@@ -20,10 +20,9 @@ import {
 import CloseIcon from '@mui/icons-material/Close'
 import { useRouter } from 'next/router'
 import { useAppDispatch, useAppSelector } from '@/store'
-import { selectWalletConnectApiKey, setWalletConnectPairingCode } from '@/store/settingsSlice'
+import { selectWalletConnectApiKey, setWalletConnectPairingCode, setWalletConnectApiKey } from '@/store/settingsSlice'
 import { useWalletConnectContext } from '@/components/common/WalletConnectProvider'
 import useWallet from '@/hooks/wallets/useWallet'
-import { AppRoutes } from '@/config/routes'
 
 type WalletConnectPairingModalProps = {
   open: boolean
@@ -33,12 +32,19 @@ type WalletConnectPairingModalProps = {
 
 const WalletConnectPairingModal = ({ open, onClose, anchorEl }: WalletConnectPairingModalProps) => {
   const [pairingCode, setPairingCode] = useState('')
+  const [apiKeyInput, setApiKeyInput] = useState('')
   const [activeTab, setActiveTab] = useState(0)
   const router = useRouter()
   const dispatch = useAppDispatch()
   const wallet = useWallet()
   const walletConnectApiKey = useAppSelector(selectWalletConnectApiKey)
-  const isApiKeySet = walletConnectApiKey && walletConnectApiKey.trim() !== ''
+  const envApiKey = process.env.NEXT_PUBLIC_WC_PROJECT_ID
+
+  const effectiveApiKey = useMemo(() => {
+    return walletConnectApiKey && walletConnectApiKey.trim() !== '' ? walletConnectApiKey : envApiKey
+  }, [walletConnectApiKey, envApiKey])
+
+  const isApiKeySet = effectiveApiKey && effectiveApiKey.trim() !== ''
 
   const { sessions, pendingProposal, pair, approveSession, rejectSession, disconnectSession, error } =
     useWalletConnectContext()
@@ -46,8 +52,11 @@ const WalletConnectPairingModal = ({ open, onClose, anchorEl }: WalletConnectPai
   useEffect(() => {
     if (open) {
       setPairingCode('')
+      if (!walletConnectApiKey && envApiKey) {
+        setApiKeyInput(envApiKey)
+      }
     }
-  }, [open])
+  }, [open, walletConnectApiKey, envApiKey])
 
   useEffect(() => {
     if (pendingProposal && activeTab !== 1) {
@@ -110,9 +119,11 @@ const WalletConnectPairingModal = ({ open, onClose, anchorEl }: WalletConnectPai
     }
   }
 
-  const navigateToSettings = () => {
-    onClose()
-    router.push(AppRoutes.settings.environmentVariables)
+  const handleSaveApiKey = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (apiKeyInput.trim() !== '') {
+      dispatch(setWalletConnectApiKey(apiKeyInput.trim()))
+    }
   }
 
   const id = open ? 'walletconnect-popover' : undefined
@@ -153,18 +164,37 @@ const WalletConnectPairingModal = ({ open, onClose, anchorEl }: WalletConnectPai
             <Box sx={{ mb: 2 }}>
               <Alert severity="warning" sx={{ mb: 2 }}>
                 You need to set a WalletConnect API key before you can use this feature.
+                {envApiKey && (
+                  <Box sx={{ mt: 1 }}>
+                    An API key is available from your environment variables. You can use it or enter a custom one.
+                  </Box>
+                )}
               </Alert>
-              <Typography variant="body1">
-                Please go to Settings &gt; Environment Variables and enter your WalletConnect API key.
+              <Typography variant="body1" sx={{ mb: 2 }}>
+                Please enter your WalletConnect API key below:
               </Typography>
-            </Box>
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-              <Button onClick={onClose} sx={{ mr: 1 }}>
-                Cancel
-              </Button>
-              <Button onClick={navigateToSettings} variant="contained" color="primary">
-                Go to Settings
-              </Button>
+              <form onSubmit={handleSaveApiKey}>
+                <TextField
+                  autoFocus
+                  margin="dense"
+                  id="api-key"
+                  label="WalletConnect API Key"
+                  type="text"
+                  fullWidth
+                  variant="outlined"
+                  value={apiKeyInput}
+                  onChange={(e) => setApiKeyInput(e.target.value)}
+                  sx={{ mb: 2 }}
+                />
+                <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                  <Button onClick={onClose} sx={{ mr: 1 }}>
+                    Cancel
+                  </Button>
+                  <Button type="submit" variant="contained" color="primary" disabled={!apiKeyInput.trim()}>
+                    Save API Key
+                  </Button>
+                </Box>
+              </form>
             </Box>
           </>
         ) : (
