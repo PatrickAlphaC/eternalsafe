@@ -43,14 +43,12 @@ const WalletConnectPairingModal = ({ open, onClose, anchorEl }: WalletConnectPai
   const { sessions, pendingProposal, pair, approveSession, rejectSession, disconnectSession, error } =
     useWalletConnectContext()
 
-  // Reset pairing code when modal is opened
   useEffect(() => {
     if (open) {
       setPairingCode('')
     }
   }, [open])
 
-  // Auto-switch to the proposals tab if there's a pending proposal
   useEffect(() => {
     if (pendingProposal && activeTab !== 1) {
       setActiveTab(1)
@@ -64,13 +62,10 @@ const WalletConnectPairingModal = ({ open, onClose, anchorEl }: WalletConnectPai
   const handleSubmit = async () => {
     if (pairingCode.trim() !== '') {
       try {
-        // Store the pairing code in the settings
         dispatch(setWalletConnectPairingCode(pairingCode.trim()))
 
-        // Handle the actual WalletConnect pairing
         await pair(pairingCode.trim())
 
-        // Clear the pairing code
         setPairingCode('')
       } catch (e) {
         console.error('Failed to pair:', e)

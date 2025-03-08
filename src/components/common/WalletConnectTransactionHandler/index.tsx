@@ -1,29 +1,38 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useRouter } from 'next/router'
 import { useWalletConnectContext } from '@/components/common/WalletConnectProvider'
 import { AppRoutes } from '@/config/routes'
+import useSafeInfo from '@/hooks/useSafeInfo'
 
-// Main component that redirects to the WalletConnect transaction page
 const WalletConnectTransactionHandler = () => {
   const { pendingRequest } = useWalletConnectContext()
   const router = useRouter()
+  const { safeAddress } = useSafeInfo()
+  const redirectedRequestIds = useRef(new Set<number>())
 
-  // When a pending request is received, redirect to the transaction page
   useEffect(() => {
     if (!pendingRequest) return
 
-    // Only handle eth_sendTransaction requests
-    if (pendingRequest.params.request.method === 'eth_sendTransaction') {
-      // Redirect to the WalletConnect transaction page while preserving query parameters
-      // Use Next.js router.query to ensure we get all query parameters, including the 'safe' parameter
+    if (router.pathname === AppRoutes.walletConnect.transaction) return
+
+    console.log('pendingRequest', pendingRequest)
+    console.log(redirectedRequestIds)
+
+    if (redirectedRequestIds.current.has(pendingRequest.id)) return
+
+    if (
+      pendingRequest.params.request.method === 'eth_sendTransaction' &&
+      safeAddress != undefined &&
+      safeAddress != ''
+    ) {
+      redirectedRequestIds.current.add(pendingRequest.id)
       const query = router.query
-      // Redirect to the WalletConnect transaction page with the same query parameters
       router.push({
         pathname: AppRoutes.walletConnect.transaction,
         query,
       })
     }
-  }, [pendingRequest, router])
+  }, [pendingRequest, router, router.pathname, safeAddress])
 
   return null
 }
