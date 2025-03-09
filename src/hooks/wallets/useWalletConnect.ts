@@ -171,8 +171,8 @@ const useWalletConnect = (): WalletConnectHook => {
             metadata: {
               name: 'Eternal Safe Wallet',
               description: 'Eternal Safe Wallet for Web3',
-              url: '',
-              icons: [''],
+              url: window.location.origin,
+              icons: [`${window.location.origin}/favicon.ico`],
             },
           })
 
