@@ -23,7 +23,7 @@ import { useAppDispatch, useAppSelector } from '@/store'
 import { selectWalletConnectApiKey, setWalletConnectPairingCode, setWalletConnectApiKey } from '@/store/settingsSlice'
 import { useWalletConnectContext } from '@/components/common/WalletConnectProvider'
 import useWallet from '@/hooks/wallets/useWallet'
-import { WC_PROJECT_ID } from '../../../config/constants'
+import { WC_PROJECT_ID } from '@/config/constants'
 
 type WalletConnectPairingModalProps = {
   open: boolean
