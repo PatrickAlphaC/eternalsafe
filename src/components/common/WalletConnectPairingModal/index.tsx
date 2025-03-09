@@ -23,6 +23,7 @@ import { useAppDispatch, useAppSelector } from '@/store'
 import { selectWalletConnectApiKey, setWalletConnectPairingCode, setWalletConnectApiKey } from '@/store/settingsSlice'
 import { useWalletConnectContext } from '@/components/common/WalletConnectProvider'
 import useWallet from '@/hooks/wallets/useWallet'
+import { WC_PROJECT_ID } from '../../../config/constants'
 
 type WalletConnectPairingModalProps = {
   open: boolean
@@ -38,7 +39,7 @@ const WalletConnectPairingModal = ({ open, onClose, anchorEl }: WalletConnectPai
   const dispatch = useAppDispatch()
   const wallet = useWallet()
   const walletConnectApiKey = useAppSelector(selectWalletConnectApiKey)
-  const envApiKey = process.env.NEXT_PUBLIC_WC_PROJECT_ID
+  const envApiKey = WC_PROJECT_ID
 
   const effectiveApiKey = useMemo(() => {
     return walletConnectApiKey && walletConnectApiKey.trim() !== '' ? walletConnectApiKey : envApiKey

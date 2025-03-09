@@ -15,9 +15,6 @@ const WalletConnectTransactionHandler = () => {
 
     if (router.pathname === AppRoutes.walletConnect.transaction) return
 
-    console.log('pendingRequest', pendingRequest)
-    console.log(redirectedRequestIds)
-
     if (redirectedRequestIds.current.has(pendingRequest.id)) return
 
     if (
