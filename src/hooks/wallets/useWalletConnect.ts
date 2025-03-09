@@ -103,6 +103,51 @@ const useWalletConnect = (): WalletConnectHook => {
     pendingRequestRef.current = pendingRequest
   }, [pendingProposal, pendingRequest])
 
+  // Set up event listeners for WalletKit
+  const setupEventListeners = useCallback((walletKit: any) => {
+    // Session proposal event
+    walletKit.on('session_proposal', (proposal: SessionProposal) => {
+      console.log('Received session proposal:', proposal)
+      setPendingProposal(proposal)
+    })
+
+    // Session request event
+    walletKit.on('session_request', (request: SessionRequest) => {
+      console.log('Received session request:', request)
+      setPendingRequest(request)
+    })
+
+    // Session delete event
+    walletKit.on('session_delete', ({ topic }: { topic: string }) => {
+      console.log('Session deleted:', topic)
+      setSessions((prev) => prev.filter((session) => session.topic !== topic))
+    })
+
+    // Session update event
+    walletKit.on(
+      'session_update',
+      ({ topic, params }: { topic: string; params: { namespaces: Record<string, any> } }) => {
+        console.log('Session updated:', topic, params)
+        setSessions((prev) => {
+          const updatedSessions = [...prev]
+          const sessionIndex = updatedSessions.findIndex((session) => session.topic === topic)
+          if (sessionIndex !== -1) {
+            updatedSessions[sessionIndex] = {
+              ...updatedSessions[sessionIndex],
+              namespaces: params.namespaces,
+            }
+          }
+          return updatedSessions
+        })
+      },
+    )
+
+    // Session event
+    walletKit.on('session_event', ({ topic, params }: { topic: string; params: any }) => {
+      console.log('Session event:', topic, params)
+    })
+  }, [])
+
   useEffect(() => {
     const initWalletKit = async () => {
       if (!projectId || isInitialized || isInitializing || !wallet) {
@@ -181,52 +226,7 @@ const useWalletConnect = (): WalletConnectHook => {
     }
 
     initWalletKit()
-  }, [projectId, isInitialized, isInitializing, wallet, pairingCode])
-
-  // Set up event listeners for WalletKit
-  const setupEventListeners = useCallback((walletKit: any) => {
-    // Session proposal event
-    walletKit.on('session_proposal', (proposal: SessionProposal) => {
-      console.log('Received session proposal:', proposal)
-      setPendingProposal(proposal)
-    })
-
-    // Session request event
-    walletKit.on('session_request', (request: SessionRequest) => {
-      console.log('Received session request:', request)
-      setPendingRequest(request)
-    })
-
-    // Session delete event
-    walletKit.on('session_delete', ({ topic }: { topic: string }) => {
-      console.log('Session deleted:', topic)
-      setSessions((prev) => prev.filter((session) => session.topic !== topic))
-    })
-
-    // Session update event
-    walletKit.on(
-      'session_update',
-      ({ topic, params }: { topic: string; params: { namespaces: Record<string, any> } }) => {
-        console.log('Session updated:', topic, params)
-        setSessions((prev) => {
-          const updatedSessions = [...prev]
-          const sessionIndex = updatedSessions.findIndex((session) => session.topic === topic)
-          if (sessionIndex !== -1) {
-            updatedSessions[sessionIndex] = {
-              ...updatedSessions[sessionIndex],
-              namespaces: params.namespaces,
-            }
-          }
-          return updatedSessions
-        })
-      },
-    )
-
-    // Session event
-    walletKit.on('session_event', ({ topic, params }: { topic: string; params: any }) => {
-      console.log('Session event:', topic, params)
-    })
-  }, [])
+  }, [projectId, isInitialized, isInitializing, wallet, pairingCode, setupEventListeners])
 
   // Pair with a dApp
   const pair = useCallback(
