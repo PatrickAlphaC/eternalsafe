@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect } from 'react'
 import {
   Button,
   TextField,
@@ -23,7 +23,6 @@ import { useAppDispatch, useAppSelector } from '@/store'
 import { selectWalletConnectApiKey, setWalletConnectPairingCode, setWalletConnectApiKey } from '@/store/settingsSlice'
 import { useWalletConnectContext } from '@/components/common/WalletConnectProvider'
 import useWallet from '@/hooks/wallets/useWallet'
-import { WC_PROJECT_ID } from '@/config/constants'
 
 type WalletConnectPairingModalProps = {
   open: boolean
@@ -39,25 +38,17 @@ const WalletConnectPairingModal = ({ open, onClose, anchorEl }: WalletConnectPai
   const dispatch = useAppDispatch()
   const wallet = useWallet()
   const walletConnectApiKey = useAppSelector(selectWalletConnectApiKey)
-  const envApiKey = WC_PROJECT_ID
-
-  const effectiveApiKey = useMemo(() => {
-    return walletConnectApiKey && walletConnectApiKey.trim() !== '' ? walletConnectApiKey : envApiKey
-  }, [walletConnectApiKey, envApiKey])
-
-  const isApiKeySet = effectiveApiKey && effectiveApiKey.trim() !== ''
+  const envApiKey = (typeof process !== 'undefined' && process.env.WC_PROJECT_ID) || ''
+  const isApiKeySet = !!walletConnectApiKey
 
   const { sessions, pendingProposal, pair, approveSession, rejectSession, disconnectSession, error } =
     useWalletConnectContext()
 
   useEffect(() => {
     if (open) {
-      setPairingCode('')
-      if (!walletConnectApiKey && envApiKey) {
-        setApiKeyInput(envApiKey)
-      }
+      setPairingCode('') // Reset pairing code when modal opens
     }
-  }, [open, walletConnectApiKey, envApiKey])
+  }, [open])
 
   useEffect(() => {
     if (pendingProposal && activeTab !== 1) {
