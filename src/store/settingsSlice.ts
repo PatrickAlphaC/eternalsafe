@@ -3,6 +3,7 @@ import { createSelector, createSlice } from '@reduxjs/toolkit'
 import merge from 'lodash/merge'
 
 import type { RootState } from '@/store'
+import { WC_PROJECT_ID } from '@/config/constants'
 
 export type EnvState = {
   tenderly: {
@@ -159,7 +160,11 @@ export const selectIPFS = createSelector(selectSettings, (settings) => settings.
 
 export const selectTenderly = createSelector(selectSettings, (settings) => settings.env.tenderly)
 
-export const selectWalletConnectApiKey = createSelector(selectSettings, (settings) => settings.env.walletConnectApiKey)
+export const selectWalletConnectApiKey = createSelector(selectSettings, (settings) => {
+  const storedKey = settings.env.walletConnectApiKey
+  const envKey = WC_PROJECT_ID || ''
+  return storedKey || (envKey.length > 0 ? envKey : '')
+})
 
 export const selectWalletConnectPairingCode = createSelector(
   selectSettings,
