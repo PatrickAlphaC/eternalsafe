@@ -41,7 +41,7 @@ const WalletConnectPairingModal = ({ open, onClose, anchorEl }: WalletConnectPai
   const envApiKey = (typeof process !== 'undefined' && process.env.WC_PROJECT_ID) || ''
   const isApiKeySet = !!walletConnectApiKey
 
-  const { sessions, pendingProposal, pair, approveSession, rejectSession, disconnectSession, error } =
+  const { isInitialized, sessions, pendingProposal, pair, approveSession, rejectSession, disconnectSession, error } =
     useWalletConnectContext()
 
   useEffect(() => {
@@ -193,8 +193,9 @@ const WalletConnectPairingModal = ({ open, onClose, anchorEl }: WalletConnectPai
           <>
             <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 2 }}>
               <Tabs value={activeTab} onChange={handleTabChange} aria-label="WalletConnect tabs">
-                <Tab label="Connect" />
+                <Tab sx={{ flexDirection: 'row' }} label="Connect" />
                 <Tab
+                  sx={{ flexDirection: 'row' }}
                   label={
                     <>
                       Proposals
@@ -205,6 +206,7 @@ const WalletConnectPairingModal = ({ open, onClose, anchorEl }: WalletConnectPai
                   }
                 />
                 <Tab
+                  sx={{ flexDirection: 'row' }}
                   label={
                     <>
                       Sessions
@@ -342,7 +344,12 @@ const WalletConnectPairingModal = ({ open, onClose, anchorEl }: WalletConnectPai
 
               {/* Connect Tab */}
               {activeTab === 0 && (
-                <Button onClick={handleSubmit} variant="contained" color="primary" disabled={!pairingCode.trim()}>
+                <Button
+                  onClick={handleSubmit}
+                  variant="contained"
+                  color="primary"
+                  disabled={!pairingCode.trim() || !isInitialized}
+                >
                   Connect
                 </Button>
               )}

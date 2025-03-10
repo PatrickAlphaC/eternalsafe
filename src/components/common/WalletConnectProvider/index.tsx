@@ -1,5 +1,6 @@
-import { createContext, useContext, type ReactElement, type ReactNode } from 'react'
+import { createContext, useContext, useState, type ReactElement, type ReactNode } from 'react'
 import useWalletConnect, { type WalletConnectHook } from '@/hooks/wallets/useWalletConnect'
+import WalletKit from '@reown/walletkit'
 
 export const WalletConnectContext = createContext<WalletConnectHook | null>(null)
 
@@ -12,7 +13,9 @@ export const useWalletConnectContext = (): WalletConnectHook => {
 }
 
 const WalletConnectProvider = ({ children }: { children: ReactNode }): ReactElement => {
-  const walletConnect = useWalletConnect()
+  const [walletKitInstance, setWalletKitInstance] = useState<WalletKit | undefined>()
+
+  const walletConnect = useWalletConnect(walletKitInstance, setWalletKitInstance)
 
   return <WalletConnectContext.Provider value={walletConnect}>{children}</WalletConnectContext.Provider>
 }

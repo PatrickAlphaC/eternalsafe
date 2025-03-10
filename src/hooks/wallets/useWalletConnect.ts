@@ -1,13 +1,13 @@
-import { useEffect, useState, useCallback, useRef } from 'react'
+import { useEffect, useState, useCallback, useRef, Dispatch, SetStateAction } from 'react'
 import { Core } from '@walletconnect/core'
 import { WalletKit } from '@reown/walletkit'
 import type { SessionTypes } from '@walletconnect/types'
 import { getSdkError } from '@walletconnect/utils'
 import { useAppSelector } from '@/store'
 import { selectWalletConnectApiKey, selectWalletConnectPairingCode } from '@/store/settingsSlice'
-import useWallet from './useWallet'
 import useSafeInfo from '@/hooks/useSafeInfo'
 import useChainId from '../useChainId'
+import { WalletKit as WalletKitType } from '@reown/walletkit/dist/types/client'
 
 export type SessionProposal = {
   id: number
@@ -70,7 +70,7 @@ export type WalletConnectHook = {
   pendingRequest: SessionRequest | null
   error: Error | null
   pair: (uri: string) => Promise<void>
-  approveSession: (namespaces: Record<string, any>) => Promise<void>
+  approveSession: (namespaces: Record<string, any>) => Promise<SessionTypes.Struct>
   rejectSession: () => Promise<void>
   approveRequest: (result: any) => Promise<void>
   rejectRequest: (reason?: string) => Promise<void>
@@ -78,11 +78,10 @@ export type WalletConnectHook = {
   updateSession: (topic: string, namespaces: Record<string, any>) => Promise<void>
 }
 
-// Singleton instance of WalletKit
-let walletKitInstance: any = null
-
-const useWalletConnect = (): WalletConnectHook => {
-  const wallet = useWallet()
+const useWalletConnect = (
+  walletKitInstance: WalletKitType | undefined,
+  setWalletKitInstance: Dispatch<SetStateAction<WalletKitType | undefined>>,
+): WalletConnectHook => {
   const projectId = useAppSelector(selectWalletConnectApiKey)
   const pairingCode = useAppSelector(selectWalletConnectPairingCode)
   const { safeAddress } = useSafeInfo()
@@ -150,7 +149,7 @@ const useWalletConnect = (): WalletConnectHook => {
 
   useEffect(() => {
     const initWalletKit = async () => {
-      if (!projectId || isInitialized || isInitializing || !wallet) {
+      if (!projectId || isInitialized || isInitializing) {
         return
       }
 
@@ -162,6 +161,8 @@ const useWalletConnect = (): WalletConnectHook => {
         const core = new Core({
           projectId,
         })
+
+        let walletKitInstance: WalletKitType | undefined
 
         try {
           console.log('Creating WalletKit instance...')
@@ -216,6 +217,7 @@ const useWalletConnect = (): WalletConnectHook => {
         }
 
         setIsInitialized(true)
+        setWalletKitInstance(walletKitInstance)
         console.log('WalletKit initialized successfully')
       } catch (e) {
         console.error('Failed to initialize WalletKit:', e)
@@ -226,7 +228,7 @@ const useWalletConnect = (): WalletConnectHook => {
     }
 
     initWalletKit()
-  }, [projectId, isInitialized, isInitializing, wallet, pairingCode, setupEventListeners])
+  }, [projectId, isInitialized, isInitializing, pairingCode, setupEventListeners])
 
   // Pair with a dApp
   const pair = useCallback(
@@ -264,9 +266,10 @@ const useWalletConnect = (): WalletConnectHook => {
 
         if (Object.keys(namespaces).length === 0) {
           // Create a custom namespaces object directly
+          // TODO(eternalsafe): Add all supported chains
           approvedNamespaces = {
             eip155: {
-              chains: ['eip155:1', 'eip155:137'],
+              chains: ['eip155:1', 'eip155:11155111'],
               methods: ['eth_sendTransaction', 'personal_sign'],
               events: ['accountsChanged', 'chainChanged'],
               accounts: [`eip155:${chainId}:${safeAddress}`],
@@ -294,6 +297,8 @@ const useWalletConnect = (): WalletConnectHook => {
           reason: getSdkError('USER_REJECTED'),
         })
 
+        setPendingProposal(null)
+
         throw error
       }
     },
@@ -320,6 +325,9 @@ const useWalletConnect = (): WalletConnectHook => {
     } catch (e) {
       console.error('Failed to reject session:', e)
       setError(e instanceof Error ? e : new Error('Failed to reject session'))
+
+      setPendingProposal(null)
+
       throw e
     }
   }, [isInitialized])

@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import useAsync, { type AsyncResult } from '../useAsync'
 import { Errors, logError } from '@/services/exceptions'
 import useSafeInfo from '../useSafeInfo'
@@ -46,6 +46,11 @@ export const useLoadTxHistory = (): AsyncResult<TxHistory> => {
   const { safe, safeAddress } = useSafeInfo()
   const { chainId } = safe
   const [pollCount, resetPolling] = useIntervalCounter(POLLING_INTERVAL)
+  // const [lastBlockQueried, setLastBlockQueried] = useState<number | undefined>()
+
+  // useEffect(() => {
+  //   setLastBlockQueried(undefined)
+  // }, [safeAddress])
 
   const [data, error, loading] = useAsync<TxHistory | undefined>(
     async () => {
@@ -55,7 +60,8 @@ export const useLoadTxHistory = (): AsyncResult<TxHistory> => {
 
       if (!safeContract) return
 
-      const logs = await safeContract.queryFilter(safeContract.filters.ExecutionSuccess(), 0, 'latest')
+      // TODO(eternalsafe): set this back to 'latest'
+      const logs = await safeContract.queryFilter(safeContract.filters.ExecutionSuccess(), 0, 1000)
 
       let txs = await Promise.all(
         logs.map(async (log, i) => {

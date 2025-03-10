@@ -37,22 +37,22 @@ const WalletConnectButton = () => {
         }
         arrow
       >
-        <Badge
-          color={hasPendingRequests || hasPendingProposals ? 'error' : 'primary'}
-          variant="dot"
-          invisible={!showBadge}
+        <IconButton
+          ref={buttonRef}
+          onClick={handleOpenModal}
+          size="small"
+          color="primary"
+          className={css.walletConnectButton}
+          aria-label="WalletConnect Pairing"
         >
-          <IconButton
-            ref={buttonRef}
-            onClick={handleOpenModal}
-            size="small"
-            color="primary"
-            className={css.walletConnectButton}
-            aria-label="WalletConnect Pairing"
+          <Badge
+            color={hasPendingRequests || hasPendingProposals ? 'error' : 'primary'}
+            variant="dot"
+            invisible={!showBadge}
           >
             <SvgIcon component={WalletConnectIcon} inheritViewBox fontSize="small" />
-          </IconButton>
-        </Badge>
+          </Badge>
+        </IconButton>
       </Tooltip>
       <WalletConnectPairingModal open={isModalOpen} onClose={handleCloseModal} anchorEl={buttonRef.current} />
     </>
