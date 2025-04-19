@@ -19,8 +19,9 @@ import { showNotification } from '@/store/notificationsSlice'
 
 const keepPathRoutes = [AppRoutes.welcome.index, AppRoutes.newSafe.load, AppRoutes.newSafe.create]
 
-// Define the route for custom chain page in the pages directory
+// Define a custom route for creating a new chain
 const CUSTOM_CHAIN_ROUTE = '/customChain'
+// Special value to identify the "Create Custom Chain" option
 const CUSTOM_CHAIN_VALUE = 'custom-chain'
 
 const NetworkSelector = (props: { onChainSelect?: () => void }): ReactElement => {
