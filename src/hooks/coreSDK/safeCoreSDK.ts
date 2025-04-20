@@ -69,11 +69,21 @@ export const initSafeSDK = async ({
 
   const ethAdapter = createReadOnlyEthersAdapter(provider)
 
+  // find out if the implementation is any of the possible L1Safe singletons
+  let isL1SafeMasterCopy = _SAFE_DEPLOYMENTS.some((safeDeployments) =>
+    (Object.values(safeDeployments.deployments) ?? []).some((deployment) => deployment.address === implementation),
+  )
+
+  // Legacy Safe contracts
+  if (isLegacyVersion(safeVersion)) {
+    isL1SafeMasterCopy = true
+  }
+
   // Need to structure the contractNetworks correctly
   return Safe.create({
     ethAdapter,
     safeAddress: address,
-    isL1SafeMasterCopy: true,
+    isL1SafeMasterCopy,
     contractNetworks: {
       [chainId]: {
         // Required contract addresses

@@ -38,3 +38,4 @@ This served as a working todo list for the scope of the [wave 1 grant](https://a
 - [x] Update welcome page for Eternal Safe and only allow loading an already existing Safe
 - [x] Rename app
 - [x] Rip out analytics
+- [ ] Fix the issue from [load-safe-todo.png]
