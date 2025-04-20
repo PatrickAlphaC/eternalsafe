@@ -64,111 +64,43 @@ export const initSafeSDK = async ({
   multisendCallOnlyAddress
 }: SafeCoreSDKProps): Promise<Safe> => {
   const safeVersion = await Gnosis_safe__factory.connect(address, provider).VERSION()
+  const network = await provider.getNetwork()
+  const chainId = network.chainId.toString()
 
-  // find out if the implementation is any of the possible L1Safe singletons
-  let isL1SafeMasterCopy = _SAFE_DEPLOYMENTS.some((safeDeployments) =>
-    (Object.values(safeDeployments.deployments) ?? []).some((deployment) => deployment.address === implementation),
-  )
-
-  // Legacy Safe contracts
-  if (isLegacyVersion(safeVersion)) {
-    isL1SafeMasterCopy = true
-  }
-
-  // Create an adapter
   const ethAdapter = createReadOnlyEthersAdapter(provider)
 
-  try {
-    // Check if we need to provide custom contract addresses
-    if (multisendAddress && multisendCallOnlyAddress) {
-      // Get the chain ID
-      const network = await provider.getNetwork()
-      const chainId = network.chainId.toString() // Convert to string as required by the SDK
-
-      // Get the default deployments for this chain to keep other addresses
-      let defaultContracts: any = {}
-
-      // Look through all deployed contracts to find matching deployments for this chain
-      const chainDeployments = _SAFE_DEPLOYMENTS.find(deployment =>
-        Object.keys(deployment.deployments).includes(chainId)
-      )
-
-      if (chainDeployments) {
-
-        const deployment = chainDeployments.deployments[chainId as keyof typeof chainDeployments.deployments];
-
-        if (deployment) {
-          // Get the latest version's deployment
-          defaultContracts = {
-            safeMasterCopyAddress: deployment.address || implementation,
-            safeProxyFactoryAddress: '',
-            multiSendAddress: '',
-            multiSendCallOnlyAddress: '',
-            fallbackHandlerAddress: '',
-            signMessageLibAddress: '',
-            createCallAddress: '',
-            simulateTxAccessorAddress: ''
-          }
-        }
+  // Need to structure the contractNetworks correctly
+  return Safe.create({
+    ethAdapter,
+    safeAddress: address,
+    isL1SafeMasterCopy: true,
+    contractNetworks: {
+      [chainId]: {
+        // Required contract addresses
+        safeMasterCopyAddress: implementation,
+        safeProxyFactoryAddress: "", // Use appropriate address
+        multiSendAddress: multisendAddress || '',
+        multiSendCallOnlyAddress: multisendCallOnlyAddress || '',
+        // Fill in other required addresses
+        fallbackHandlerAddress: "", // Example address
+        signMessageLibAddress: "", // Example address
+        createCallAddress: "", // Example address
+        simulateTxAccessorAddress: "" // Example address
       }
-
-      // Verify multisend addresses if provided
-      if (multisendAddress) {
-        const isValidAddress = await provider.getCode(multisendAddress).then(code => code !== '0x')
-        if (!isValidAddress) {
-          throw new Error('Invalid MultiSend contract address - no code at this address')
-        }
-      }
-
-      if (multisendCallOnlyAddress) {
-        const isValidAddress = await provider.getCode(multisendCallOnlyAddress).then(code => code !== '0x')
-        if (!isValidAddress) {
-          throw new Error('Invalid MultiSendCallOnly contract address - no code at this address')
-        }
-      }
-
-      console.log("ADDRESS: ", multisendAddress)
-      console.log("CALL ONLY ADDRESS: ", multisendCallOnlyAddress)
-
-      // Create Safe with custom contractNetworks
-      return Safe.create({
-        ethAdapter,
-        safeAddress: address,
-        isL1SafeMasterCopy,
-        contractNetworks: {
-          [chainId]: {
-            ...defaultContracts,
-            // Override only the provided addresses
-            ...(multisendAddress ? { multisendAddress } : {}),
-            ...(multisendCallOnlyAddress ? { multisendCallOnlyAddress } : {})
-          }
-        }
-      })
     }
-
-    // Default initialization without custom contractNetworks
-    return Safe.create({
-      ethAdapter,
-      safeAddress: address,
-      isL1SafeMasterCopy
-    })
-  } catch (error) {
-    console.error('Error initializing Safe SDK:', error)
-
-    // Attempt to create the Safe without custom addresses if that was the issue
-    if (multisendAddress || multisendCallOnlyAddress) {
-      console.log('Falling back to default contract addresses')
-      return Safe.create({
-        ethAdapter,
-        safeAddress: address,
-        isL1SafeMasterCopy
-      })
-    }
-
-    // If it's not related to custom addresses, rethrow the error
-    throw error
-  }
+  })
 }
+
+// defaultContracts = {
+//   safeMasterCopyAddress: deployment.address || implementation,
+//   safeProxyFactoryAddress: '0xa6B71E26C5e0845f74c812102Ca7114b6a896AB2',
+//   multiSendAddress: multisendAddress,
+//   multiSendCallOnlyAddress: multisendCallOnlyAddress,
+//   fallbackHandlerAddress: '0xf48f2B2d2a534e402487b3ee7C18c33Aec0Fe5e4',
+//   signMessageLibAddress: '0xA65387F16B013cf2Af4605Ad8aA5ec25a2cbA3a2',
+//   createCallAddress: '0x7cbB62EaA69F79e6873cD1ecB2392971036cFAa4',
+//   simulateTxAccessorAddress: '0x59AD6735bCd8152B84860Cb256dD9e96b85F69Da'
+// }
 
 export const {
   getStore: getSafeSDK,

@@ -167,7 +167,6 @@ const AddressInput = ({
 
           validate: async () => {
             const value = rawValueRef.current
-
             if (value) {
               return validatePrefixed(value) || (await validate?.(parsePrefixedAddress(value).address))
             }
