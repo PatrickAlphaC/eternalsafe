@@ -8,6 +8,7 @@ import LoadRPCUrl from '@/components/welcome/WelcomeLogin/LoadRPCUrl'
 import { CHAINLIST_URL } from '@/config/constants'
 import { useEffect, useState } from 'react'
 import { useWeb3 } from '@/hooks/wallets/web3'
+import { DataWidget } from '../SafeListDrawer/DataWidget'
 
 const WelcomeLogin = () => {
   const web3 = useWeb3()
@@ -38,6 +39,7 @@ const WelcomeLogin = () => {
               Eternal Safe does not yet support creating a Safe, you must have one already created.
             </Typography>
             <LoadSafe />
+            <DataWidget />
             {/* TODO(eternalsafe): Allow import of data here */}
           </>
         ) : chain ? (
@@ -57,6 +59,7 @@ const WelcomeLogin = () => {
               You can change this later in the settings.
             </Typography>
             <LoadRPCUrl hideRpcInput={() => setForceShowRpcInput(false)} />
+            <DataWidget />
           </>
         ) : (
           <Typography mb={2} textAlign="center">
