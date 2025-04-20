@@ -38,6 +38,8 @@ export const getSafeSDKAndImplementation = async (
   web3: Provider,
   safeAddress: string,
   chainId: string,
+  multisendAddress?: string,
+  multisendCallOnlyAddress?: string
 ): Promise<[Safe, string]> => {
   const implementation = await getSafeImplementation(web3, safeAddress, chainId)
   if (!implementation || implementation === ethers.constants.HashZero) {
@@ -45,11 +47,14 @@ export const getSafeSDKAndImplementation = async (
   }
 
   let implementationAddress = bytes32ToAddress(implementation)
+
   let sdk = await initSafeSDK({
     provider: web3,
     chainId,
     address: safeAddress,
     implementation: implementationAddress,
+    multisendAddress,
+    multisendCallOnlyAddress
   })
 
   return [sdk, implementationAddress]

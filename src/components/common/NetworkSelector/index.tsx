@@ -156,6 +156,7 @@ const NetworkSelector = (props: { onChainSelect?: () => void }): ReactElement =>
       {customChains.length > 0 && <Divider sx={{ my: 1 }} />}
 
       {/* Production Networks */}
+      <ListSubheader className={css.listSubHeader}>Production Networks</ListSubheader>
       {prodNets.map((chain) => renderMenuItem(chain))}
 
       {/* Testnets */}

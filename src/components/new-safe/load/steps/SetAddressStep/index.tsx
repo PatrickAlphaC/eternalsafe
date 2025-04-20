@@ -11,6 +11,10 @@ import {
   SvgIcon,
   Tooltip,
   Typography,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  TextField
 } from '@mui/material'
 import layoutCss from '@/components/new-safe/create/styles.module.css'
 import NameInput from '@/components/common/NameInput'
@@ -20,8 +24,9 @@ import NetworkSelector from '@/components/common/NetworkSelector'
 import { useMnemonicSafeName } from '@/hooks/useMnemonicName'
 import { useAddressResolver } from '@/hooks/useAddressResolver'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import AddressInput from '@/components/common/AddressInput'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import useChainId from '@/hooks/useChainId'
 import { useAppSelector } from '@/store'
 import { selectAddedSafes } from '@/store/addedSafesSlice'
@@ -30,25 +35,45 @@ import MUILink from '@mui/material/Link'
 import Link from 'next/link'
 import { getSafeSDKAndImplementation } from '@/hooks/coreSDK/useInitSafeCoreSDK'
 import { useWeb3ReadOnly } from '@/hooks/wallets/web3'
+import { ethers } from 'ethers'
+import useChains from '@/hooks/useChains'
 
 enum Field {
   name = 'name',
   address = 'address',
+  multisendAddress = 'multisendAddress',
+  multisendCallOnlyAddress = 'multisendCallOnlyAddress'
 }
 
 type FormData = {
   [Field.name]: string
   [Field.address]: string
+  [Field.multisendAddress]?: string
+  [Field.multisendCallOnlyAddress]?: string
 }
 
 const SetAddressStep = ({ data, onSubmit, onBack }: StepRenderProps<LoadSafeFormData>) => {
   const currentChainId = useChainId()
   const addedSafes = useAppSelector((state) => selectAddedSafes(state, currentChainId))
+  const [isCustomChain, setIsCustomChain] = useState(false)
+
+  // Use the useChains hook to get the chains data
+  const { configs } = useChains()
+
+  useEffect(() => {
+    if (configs && configs.length > 0) {
+      const chain = configs.find((chain) => chain.chainId === currentChainId)
+      setIsCustomChain(!!chain?.custom)
+    }
+  }, [currentChainId, configs])
+
   const formMethods = useForm<FormData>({
     mode: 'all',
     defaultValues: {
       [Field.name]: data.name,
       [Field.address]: data.address,
+      [Field.multisendAddress]: data.multisendAddress || '',
+      [Field.multisendCallOnlyAddress]: data.multisendCallOnlyAddress || '',
     },
   })
 
@@ -57,9 +82,12 @@ const SetAddressStep = ({ data, onSubmit, onBack }: StepRenderProps<LoadSafeForm
     formState: { errors, isValid },
     watch,
     getValues,
+    register,
   } = formMethods
 
   const safeAddress = watch(Field.address)
+  const multisendAddress = watch(Field.multisendAddress)
+  const multisendCallOnlyAddress = watch(Field.multisendCallOnlyAddress)
 
   const randomName = useMnemonicSafeName()
   const { ens, name, resolving } = useAddressResolver(safeAddress)
@@ -79,9 +107,35 @@ const SetAddressStep = ({ data, onSubmit, onBack }: StepRenderProps<LoadSafeForm
     }
 
     try {
-      await getSafeSDKAndImplementation(web3ReadOnly, address, currentChainId)
+      await getSafeSDKAndImplementation(
+        web3ReadOnly,
+        address,
+        currentChainId,
+        multisendAddress,
+        multisendCallOnlyAddress
+      )
     } catch (error: any) {
+      console.error('Error validating Safe address:', error)
+
+      // Check if the error is related to the multisend addresses
+      if (error.message && (
+        error.message.includes('MultiSend') ||
+        error.message.includes('MultiSendCallOnly')
+      )) {
+        return 'Invalid multisend contract address. Please verify the address or leave it empty.'
+      }
+
       return 'Address given is not a valid Safe Account address on the current network.'
+    }
+  }
+
+  const validateEthereumAddress = (address: string | undefined) => {
+    if (!address) return true // Optional field
+
+    try {
+      return ethers.utils.isAddress(address) || 'Invalid Ethereum address'
+    } catch (error) {
+      return 'Invalid Ethereum address'
     }
   }
 
@@ -138,6 +192,58 @@ const SetAddressStep = ({ data, onSubmit, onBack }: StepRenderProps<LoadSafeForm
           </Grid>
 
           <AddressInput label="Safe Account" validate={validateSafeAddress} name={Field.address} />
+
+          <Accordion sx={{ mt: 3 }}>
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="advanced-options-content"
+              id="advanced-options-header"
+            >
+              <Typography>Advanced Options</Typography>
+              {isCustomChain && (
+                <Tooltip
+                  title="Custom networks may require specifying contract addresses"
+                  arrow
+                  placement="top"
+                >
+                  <InputAdornment position="end" sx={{ ml: 1 }}>
+                    <SvgIcon component={InfoIcon} inheritViewBox color="info" />
+                  </InputAdornment>
+                </Tooltip>
+              )}
+            </AccordionSummary>
+            <AccordionDetails>
+              <Typography variant="body2" color="text.secondary" mb={2}>
+                These settings are only needed for custom networks or special configurations.
+              </Typography>
+
+              <Grid container spacing={3}>
+                <Grid item xs={12}>
+                  <TextField
+                    label="MultiSend Contract Address"
+                    fullWidth
+                    {...register(Field.multisendAddress, { validate: validateEthereumAddress })}
+                    error={!!errors[Field.multisendAddress]}
+                    helperText={errors[Field.multisendAddress]?.message || 'Optional: Specify custom MultiSend contract address'}
+                    placeholder="0x..."
+                    InputLabelProps={{ shrink: true }}
+                  />
+                </Grid>
+
+                <Grid item xs={12}>
+                  <TextField
+                    label="MultiSendCallOnly Contract Address"
+                    fullWidth
+                    {...register(Field.multisendCallOnlyAddress, { validate: validateEthereumAddress })}
+                    error={!!errors[Field.multisendCallOnlyAddress]}
+                    helperText={errors[Field.multisendCallOnlyAddress]?.message || 'Optional: Specify custom MultiSendCallOnly contract address'}
+                    placeholder="0x..."
+                    InputLabelProps={{ shrink: true }}
+                  />
+                </Grid>
+              </Grid>
+            </AccordionDetails>
+          </Accordion>
 
           <Typography mt={4}>
             By continuing, you agree to have read and understood the{' '}
