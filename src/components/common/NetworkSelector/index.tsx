@@ -19,9 +19,8 @@ import { showNotification } from '@/store/notificationsSlice'
 
 const keepPathRoutes = [AppRoutes.welcome.index, AppRoutes.newSafe.load, AppRoutes.newSafe.create]
 
-// Define a custom route for creating a new chain
+// Define the route for custom chain page in the pages directory
 const CUSTOM_CHAIN_ROUTE = '/customChain'
-// Special value to identify the "Create Custom Chain" option
 const CUSTOM_CHAIN_VALUE = 'custom-chain'
 
 const NetworkSelector = (props: { onChainSelect?: () => void }): ReactElement => {
@@ -178,7 +177,7 @@ const NetworkSelector = (props: { onChainSelect?: () => void }): ReactElement =>
           </div>
         </Link>
       </MenuItem>
-    </Select>
+    </Select >
   ) : (
     <Skeleton width={94} height={31} sx={{ mx: 2 }} />
   )
