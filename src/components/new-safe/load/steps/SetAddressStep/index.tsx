@@ -117,14 +117,6 @@ const SetAddressStep = ({ data, onSubmit, onBack }: StepRenderProps<LoadSafeForm
     } catch (error: any) {
       console.error('Error validating Safe address:', error)
 
-      // Check if the error is related to the multisend addresses
-      if (error.message && (
-        error.message.includes('MultiSend') ||
-        error.message.includes('MultiSendCallOnly')
-      )) {
-        return 'Invalid multisend contract address. Please verify the address or leave it empty.'
-      }
-
       return 'Address given is not a valid Safe Account address on the current network.'
     }
   }
@@ -200,17 +192,6 @@ const SetAddressStep = ({ data, onSubmit, onBack }: StepRenderProps<LoadSafeForm
               id="advanced-options-header"
             >
               <Typography>Advanced Options</Typography>
-              {isCustomChain && (
-                <Tooltip
-                  title="Custom networks may require specifying contract addresses"
-                  arrow
-                  placement="top"
-                >
-                  <InputAdornment position="end" sx={{ ml: 1 }}>
-                    <SvgIcon component={InfoIcon} inheritViewBox color="info" />
-                  </InputAdornment>
-                </Tooltip>
-              )}
             </AccordionSummary>
             <AccordionDetails>
               <Typography variant="body2" color="text.secondary" mb={2}>

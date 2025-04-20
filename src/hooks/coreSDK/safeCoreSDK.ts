@@ -80,7 +80,7 @@ export const initSafeSDK = async ({
 
   try {
     // Check if we need to provide custom contract addresses
-    if (multisendAddress || multisendCallOnlyAddress) {
+    if (multisendAddress && multisendCallOnlyAddress) {
       // Get the chain ID
       const network = await provider.getNetwork()
       const chainId = network.chainId.toString() // Convert to string as required by the SDK
@@ -94,18 +94,20 @@ export const initSafeSDK = async ({
       )
 
       if (chainDeployments) {
-        const deployment = chainDeployments.deployments[chainId]
+
+        const deployment = chainDeployments.deployments[chainId as keyof typeof chainDeployments.deployments];
+
         if (deployment) {
           // Get the latest version's deployment
           defaultContracts = {
-            safeMasterCopyAddress: deployment.masterCopy?.address || implementation,
-            safeProxyFactoryAddress: deployment.proxyFactory?.address || '',
-            multiSendAddress: deployment.multiSend?.address || '',
-            multiSendCallOnlyAddress: deployment.multiSendCallOnly?.address || '',
-            fallbackHandlerAddress: deployment.fallbackHandler?.address || '',
-            signMessageLibAddress: deployment.signMessageLib?.address || '',
-            createCallAddress: deployment.createCall?.address || '',
-            simulateTxAccessorAddress: deployment.simulateTxAccessor?.address || ''
+            safeMasterCopyAddress: deployment.address || implementation,
+            safeProxyFactoryAddress: '',
+            multiSendAddress: '',
+            multiSendCallOnlyAddress: '',
+            fallbackHandlerAddress: '',
+            signMessageLibAddress: '',
+            createCallAddress: '',
+            simulateTxAccessorAddress: ''
           }
         }
       }
@@ -125,6 +127,9 @@ export const initSafeSDK = async ({
         }
       }
 
+      console.log("ADDRESS: ", multisendAddress)
+      console.log("CALL ONLY ADDRESS: ", multisendCallOnlyAddress)
+
       // Create Safe with custom contractNetworks
       return Safe.create({
         ethAdapter,
@@ -134,8 +139,8 @@ export const initSafeSDK = async ({
           [chainId]: {
             ...defaultContracts,
             // Override only the provided addresses
-            ...(multisendAddress ? { multiSendAddress } : {}),
-            ...(multisendCallOnlyAddress ? { multiSendCallOnlyAddress } : {})
+            ...(multisendAddress ? { multisendAddress } : {}),
+            ...(multisendCallOnlyAddress ? { multisendCallOnlyAddress } : {})
           }
         }
       })

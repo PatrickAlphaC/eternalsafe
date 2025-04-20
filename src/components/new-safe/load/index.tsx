@@ -10,9 +10,13 @@ import { AppRoutes } from '@/config/routes'
 import SafeOwnerStep from '@/components/new-safe/load/steps/SafeOwnerStep'
 import SafeReviewStep from '@/components/new-safe/load/steps/SafeReviewStep'
 
-export type LoadSafeFormData = NamedAddress & {
-  threshold: number
-  owners: NamedAddress[]
+export type LoadSafeFormData = {
+  name: string
+  address: string
+  threshold?: number
+  owners?: NamedAddress[]
+  multisendAddress?: string
+  multisendCallOnlyAddress?: string
 }
 
 export const LoadSafeSteps: TxStepperProps<LoadSafeFormData>['steps'] = [
