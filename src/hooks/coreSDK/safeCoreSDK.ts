@@ -94,7 +94,7 @@ export const initSafeSDK = async ({
           multiSendCallOnlyAddress: multisendCallOnlyAddress,
           // Fill in other required addresses
           fallbackHandlerAddress: '', // Example address
-          signMessageLibAddress: "", // Example address
+          signMessageLibAddress: '', // Example address
           createCallAddress: '', // Example address
           simulateTxAccessorAddress: '', // Example address
         },
