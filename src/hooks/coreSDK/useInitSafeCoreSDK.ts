@@ -40,7 +40,7 @@ export const getSafeSDKAndImplementation = async (
   safeAddress: string,
   chainId: string,
   multisendAddress?: string,
-  multisendCallOnlyAddress?: string
+  multisendCallOnlyAddress?: string,
 ): Promise<[Safe, string]> => {
   const implementation = await getSafeImplementation(web3, safeAddress, chainId)
   if (!implementation || implementation === ethers.constants.HashZero) {
@@ -55,7 +55,7 @@ export const getSafeSDKAndImplementation = async (
     address: safeAddress,
     implementation: implementationAddress,
     multisendAddress,
-    multisendCallOnlyAddress
+    multisendCallOnlyAddress,
   })
 
   return [sdk, implementationAddress]

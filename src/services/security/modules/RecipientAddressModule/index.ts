@@ -38,7 +38,8 @@ export const enum RecipietAddressIssueType {
 const MAINNET_CHAIN_ID = '1'
 
 export class RecipientAddressModule
-  implements SecurityModule<RecipientAddressModuleRequest, RecipientAddressModuleResponse> {
+  implements SecurityModule<RecipientAddressModuleRequest, RecipientAddressModuleResponse>
+{
   private isKnownAddress(knownAddresses: string[], address: string): boolean {
     return knownAddresses.some((knownAddress) => sameAddress(knownAddress, address))
   }

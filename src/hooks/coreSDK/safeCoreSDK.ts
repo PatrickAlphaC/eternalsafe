@@ -89,16 +89,16 @@ export const initSafeSDK = async ({
         [chainId]: {
           // Required contract addresses
           safeMasterCopyAddress: implementation,
-          safeProxyFactoryAddress: "", // Use appropriate address
+          safeProxyFactoryAddress: '', // Use appropriate address
           multiSendAddress: multisendAddress,
           multiSendCallOnlyAddress: multisendCallOnlyAddress,
           // Fill in other required addresses
-          fallbackHandlerAddress: "", // Example address
+          fallbackHandlerAddress: '', // Example address
           signMessageLibAddress: "", // Example address
-          createCallAddress: "", // Example address
-          simulateTxAccessorAddress: "" // Example address
-        }
-      }
+          createCallAddress: '', // Example address
+          simulateTxAccessorAddress: '', // Example address
+        },
+      },
     })
   } else {
     // Otherwise, use the simpler configuration
