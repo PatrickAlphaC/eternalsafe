@@ -58,7 +58,7 @@ const SafeOwnerStep = ({ data, onSubmit, onBack }: StepRenderProps<LoadSafeFormD
         data.address,
         chainId,
         data.multisendAddress,
-        data.multisendCallOnlyAddress
+        data.multisendCallOnlyAddress,
       )
       if (!sdk) {
         throw new Error('Unable to initialize Safe SDK')

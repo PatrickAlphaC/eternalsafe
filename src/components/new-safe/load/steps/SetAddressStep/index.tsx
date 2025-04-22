@@ -14,7 +14,7 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
-  TextField
+  TextField,
 } from '@mui/material'
 import layoutCss from '@/components/new-safe/create/styles.module.css'
 import NameInput from '@/components/common/NameInput'
@@ -205,7 +205,9 @@ const SetAddressStep = ({ data, onSubmit, onBack }: StepRenderProps<LoadSafeForm
                     fullWidth
                     {...register(Field.multisendAddress, { validate: validateEthereumAddress })}
                     error={!!errors[Field.multisendAddress]}
-                    helperText={errors[Field.multisendAddress]?.message || 'Optional: Specify custom MultiSend contract address'}
+                    helperText={
+                      errors[Field.multisendAddress]?.message || 'Optional: Specify custom MultiSend contract address'
+                    }
                     placeholder="0x..."
                     InputLabelProps={{ shrink: true }}
                   />
@@ -217,7 +219,10 @@ const SetAddressStep = ({ data, onSubmit, onBack }: StepRenderProps<LoadSafeForm
                     fullWidth
                     {...register(Field.multisendCallOnlyAddress, { validate: validateEthereumAddress })}
                     error={!!errors[Field.multisendCallOnlyAddress]}
-                    helperText={errors[Field.multisendCallOnlyAddress]?.message || 'Optional: Specify custom MultiSendCallOnly contract address'}
+                    helperText={
+                      errors[Field.multisendCallOnlyAddress]?.message ||
+                      'Optional: Specify custom MultiSendCallOnly contract address'
+                    }
                     placeholder="0x..."
                     InputLabelProps={{ shrink: true }}
                   />

@@ -61,7 +61,7 @@ export const initSafeSDK = async ({
   address,
   implementation,
   multisendAddress,
-  multisendCallOnlyAddress
+  multisendCallOnlyAddress,
 }: SafeCoreSDKProps): Promise<Safe> => {
   const safeVersion = await Gnosis_safe__factory.connect(address, provider).VERSION()
   const network = await provider.getNetwork()
@@ -80,8 +80,7 @@ export const initSafeSDK = async ({
   }
 
   // If multisend addresses are defined and not empty strings, use the extended configuration
-  if (multisendAddress && multisendAddress !== '' &&
-    multisendCallOnlyAddress && multisendCallOnlyAddress !== '') {
+  if (multisendAddress && multisendAddress !== '' && multisendCallOnlyAddress && multisendCallOnlyAddress !== '') {
     return Safe.create({
       ethAdapter,
       safeAddress: address,
