@@ -59,6 +59,8 @@ export const getSafeInfo = async (sdk: Safe, implementation: string): Promise<Sa
     guard: guard ? addressEx(guard) : null,
     fallbackHandler: addressEx(fallbackHandler),
     version,
+    multisendAddress: null,
+    multisendCallOnlyAddress: null,
 
     // these tags are used to force hook reloads, not needed in Eternal Safe
     collectiblesTag: '',

@@ -13,6 +13,8 @@ export const defaultSafeInfo: SafeInfo = {
   guard: null,
   fallbackHandler: { value: '' },
   version: '',
+  multisendAddress: null,
+  multisendCallOnlyAddress: null,
   collectiblesTag: '',
   txQueuedTag: '',
   txHistoryTag: '',

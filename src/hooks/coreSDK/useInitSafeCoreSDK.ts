@@ -117,5 +117,5 @@ export const useInitSafeCoreSDK = () => {
         )
         trackError(ErrorCodes._105, e.message)
       })
-  }, [dispatch, address, chainId, web3ReadOnly])
+  }, [dispatch, address, chainId, web3ReadOnly, multisendAddress, multisendCallOnlyAddress])
 }

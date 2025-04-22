@@ -33,7 +33,15 @@ const useSafeCreationEffects = ({
         .then(() => setStatus(SafeCreationStatus.INDEXED))
         .catch(() => setStatus(SafeCreationStatus.INDEX_FAILED))
     }
-  }, [chainId, pendingSafe?.safeAddress, web3ReadOnly, status, setStatus])
+  }, [
+    chainId,
+    pendingSafe?.safeAddress,
+    pendingSafe?.multisendAddress,
+    pendingSafe?.multisendCallOnlyAddress,
+    web3ReadOnly,
+    status,
+    setStatus,
+  ])
 
   // Warn about leaving the page before Safe creation
   useEffect(() => {
