@@ -40,7 +40,7 @@ const SafeReviewStep = ({ data, onBack }: StepRenderProps<LoadSafeFormData>) => 
             name: owner.name || owner.ens,
           })),
           chainId,
-          multisendAddress: multisendAddress ? { value: multisendAddress } : null,  // Include multisend addresses in the safe data
+          multisendAddress: multisendAddress ? { value: multisendAddress } : null, // Include multisend addresses in the safe data
           multisendCallOnlyAddress: multisendCallOnlyAddress ? { value: multisendCallOnlyAddress } : null,
         },
       }),
