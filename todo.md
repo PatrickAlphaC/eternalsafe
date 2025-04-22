@@ -38,3 +38,6 @@ This served as a working todo list for the scope of the [wave 1 grant](https://a
 - [x] Update welcome page for Eternal Safe and only allow loading an already existing Safe
 - [x] Rename app
 - [x] Rip out analytics
+- [x] Save the multi-send address to local storage
+- [x] Save the multi-send-call-only address to local storage
+- [x] Fix this `last-page.png` where it's confused on the address
