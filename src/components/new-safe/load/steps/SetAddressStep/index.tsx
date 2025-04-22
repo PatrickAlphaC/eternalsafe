@@ -42,7 +42,7 @@ enum Field {
   name = 'name',
   address = 'address',
   multisendAddress = 'multisendAddress',
-  multisendCallOnlyAddress = 'multisendCallOnlyAddress'
+  multisendCallOnlyAddress = 'multisendCallOnlyAddress',
 }
 
 type FormData = {
