@@ -112,7 +112,7 @@ const SetAddressStep = ({ data, onSubmit, onBack }: StepRenderProps<LoadSafeForm
         address,
         currentChainId,
         multisendAddress,
-        multisendCallOnlyAddress
+        multisendCallOnlyAddress,
       )
     } catch (error: any) {
       console.error('Error validating Safe address:', error)
