@@ -25,6 +25,8 @@ export type NewSafeFormData = {
   owners: NamedAddress[]
   saltNonce: number
   safeAddress?: string
+  multisendAddress?: string
+  multisendCallOnlyAddress?: string
 }
 
 const staticHints: Record<

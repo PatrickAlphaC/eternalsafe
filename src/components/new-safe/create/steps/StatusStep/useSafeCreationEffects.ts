@@ -23,11 +23,25 @@ const useSafeCreationEffects = ({
   // Asynchronously wait for Safe creation
   useEffect(() => {
     if (status === SafeCreationStatus.SUCCESS && pendingSafe?.safeAddress && web3ReadOnly) {
-      pollSafeInfo(web3ReadOnly, chainId, pendingSafe.safeAddress)
+      pollSafeInfo(
+        web3ReadOnly,
+        chainId,
+        pendingSafe.safeAddress,
+        pendingSafe.multisendAddress,
+        pendingSafe.multisendCallOnlyAddress,
+      )
         .then(() => setStatus(SafeCreationStatus.INDEXED))
         .catch(() => setStatus(SafeCreationStatus.INDEX_FAILED))
     }
-  }, [chainId, pendingSafe?.safeAddress, web3ReadOnly, status, setStatus])
+  }, [
+    chainId,
+    pendingSafe?.safeAddress,
+    pendingSafe?.multisendAddress,
+    pendingSafe?.multisendCallOnlyAddress,
+    web3ReadOnly,
+    status,
+    setStatus,
+  ])
 
   // Warn about leaving the page before Safe creation
   useEffect(() => {
@@ -54,6 +68,8 @@ const useSafeCreationEffects = ({
           pendingSafe.name,
           pendingSafe.owners,
           pendingSafe.threshold,
+          pendingSafe.multisendAddress,
+          pendingSafe.multisendCallOnlyAddress,
         ),
       )
     }

@@ -44,14 +44,26 @@ export class RecipientAddressModule
     return knownAddresses.some((knownAddress) => sameAddress(knownAddress, address))
   }
 
-  private async shouldWarnOfMainnetSafe(provider: Provider, currentChainId: string, address: string): Promise<boolean> {
+  private async shouldWarnOfMainnetSafe(
+    provider: Provider,
+    currentChainId: string,
+    address: string,
+    multiSendAddress?: string,
+    multiSendCallOnlyAddress?: string,
+  ): Promise<boolean> {
     // We only check if the address is a Safe on mainnet to reduce the number of requests
     if (currentChainId === MAINNET_CHAIN_ID) {
       return false
     }
 
     try {
-      let [sdk, implementation] = await getSafeSDKAndImplementation(provider, address, currentChainId)
+      let [sdk, implementation] = await getSafeSDKAndImplementation(
+        provider,
+        address,
+        currentChainId,
+        multiSendAddress,
+        multiSendCallOnlyAddress,
+      )
       if (!sdk) {
         throw new Error('Safe SDK not available')
       }
