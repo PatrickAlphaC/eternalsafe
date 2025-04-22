@@ -142,13 +142,7 @@ export const estimateSafeCreationGas = async (
   })
 }
 
-export const pollSafeInfo = async (
-  web3: Provider,
-  chainId: string,
-  txHash: string,
-  multiSendAddress?: string,
-  multisendCallOnlyAddress?: string,
-): Promise<SafeInfo> => {
+export const pollSafeInfo = async (web3: Provider, chainId: string, txHash: string, multiSendAddress?: string, multisendCallOnlyAddress?: string): Promise<SafeInfo> => {
   // exponential delay between attempts for around 4 min
   return backOff(
     async () => {
@@ -156,13 +150,7 @@ export const pollSafeInfo = async (
       if (!safeAddress) {
         throw new Error('Safe address not found in transaction receipt')
       }
-      let [sdk, implementation] = await getSafeSDKAndImplementation(
-        web3,
-        safeAddress,
-        chainId,
-        multiSendAddress,
-        multisendCallOnlyAddress,
-      )
+      let [sdk, implementation] = await getSafeSDKAndImplementation(web3, safeAddress, chainId, multiSendAddress, multisendCallOnlyAddress)
       if (!sdk) {
         throw new Error('Safe SDK not available')
       }

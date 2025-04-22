@@ -12,7 +12,11 @@ export type AddedSafesOnChain = {
   [safeAddress: string]: {
     owners: AddressEx[]
     threshold: number
+<<<<<<< HEAD
     ethBalance?: string
+=======
+    ethBalance?: string,
+>>>>>>> 9e58ac74 (wip)
     multisendAddress?: AddressEx | null
     multisendCallOnlyAddress?: AddressEx | null
   }
@@ -52,8 +56,8 @@ export const addedSafesSlice = createSlice({
         ...existingData,
         owners,
         threshold,
-        multisendAddress: multisendAddress || existingData.multisendAddress,
-        multisendCallOnlyAddress: multisendCallOnlyAddress || existingData.multisendCallOnlyAddress,
+        multisendAddress,
+        multisendCallOnlyAddress,
       }
     },
     updateAddedSafeBalance: (

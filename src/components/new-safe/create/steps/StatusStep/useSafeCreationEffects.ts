@@ -23,13 +23,7 @@ const useSafeCreationEffects = ({
   // Asynchronously wait for Safe creation
   useEffect(() => {
     if (status === SafeCreationStatus.SUCCESS && pendingSafe?.txHash && web3ReadOnly) {
-      pollSafeInfo(
-        web3ReadOnly,
-        chainId,
-        pendingSafe.txHash,
-        pendingSafe.multisendAddress,
-        pendingSafe.multisendCallOnlyAddress,
-      )
+      pollSafeInfo(web3ReadOnly, chainId, pendingSafe.txHash, pendingSafe.multisendAddress, pendingSafe.multisendCallOnlyAddress)
         .then((data) => {
           setPendingSafe({ ...pendingSafe, safeAddress: data.address.value })
           setStatus(SafeCreationStatus.INDEXED)

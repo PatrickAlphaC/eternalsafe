@@ -26,6 +26,8 @@ const SafeReviewStep = ({ data, onBack }: StepRenderProps<LoadSafeFormData>) => 
   const addSafe = () => {
     const safeName = data.name
     const safeAddress = data.address
+    const multisendAddress = data.multisendAddress || null
+    const multisendCallOnlyAddress = data.multisendCallOnlyAddress || null
 
     dispatch(
       addOrUpdateSafe({
@@ -38,8 +40,8 @@ const SafeReviewStep = ({ data, onBack }: StepRenderProps<LoadSafeFormData>) => 
             name: owner.name || owner.ens,
           })),
           chainId,
-          multisendAddress: data.multisendAddress ? { value: data.multisendAddress } : null,
-          multisendCallOnlyAddress: data.multisendCallOnlyAddress ? { value: data.multisendCallOnlyAddress } : null,
+          multisendAddress: multisendAddress ? { value: multisendAddress } : null,  // Include multisend addresses in the safe data
+          multisendCallOnlyAddress: multisendCallOnlyAddress ? { value: multisendCallOnlyAddress } : null,
         },
       }),
     )
