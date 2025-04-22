@@ -71,7 +71,6 @@ export const useInitSafeCoreSDK = () => {
   const multisendAddress = address ? addedSafes?.[address]?.multisendAddress?.value : undefined
   const multisendCallOnlyAddress = address ? addedSafes?.[address]?.multisendCallOnlyAddress?.value : undefined
 
-
   useEffect(() => {
     if (!web3ReadOnly || !address || !chainId) {
       // If we don't reset the SDK, a previous Safe could remain in the store
