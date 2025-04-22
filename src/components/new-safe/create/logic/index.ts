@@ -155,7 +155,13 @@ export const pollSafeInfo = async (web3: Provider, chainId: string, safeAddress:
   // exponential delay between attempts for around 4 min
   return backOff(
     async () => {
-      let [sdk, implementation] = await getSafeSDKAndImplementation(web3, safeAddress, chainId, multiSendAddress, multisendCallOnlyAddress)
+      let [sdk, implementation] = await getSafeSDKAndImplementation(
+        web3,
+        safeAddress,
+        chainId,
+        multiSendAddress,
+        multisendCallOnlyAddress,
+      )
       if (!sdk) {
         throw new Error('Safe SDK not available')
       }
