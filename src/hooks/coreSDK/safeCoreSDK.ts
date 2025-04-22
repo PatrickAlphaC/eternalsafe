@@ -79,26 +79,36 @@ export const initSafeSDK = async ({
     isL1SafeMasterCopy = true
   }
 
-  // Need to structure the contractNetworks correctly
-  return Safe.create({
-    ethAdapter,
-    safeAddress: address,
-    isL1SafeMasterCopy,
-    contractNetworks: {
-      [chainId]: {
-        // Required contract addresses
-        safeMasterCopyAddress: implementation,
-        safeProxyFactoryAddress: "", // Use appropriate address
-        multiSendAddress: multisendAddress || '',
-        multiSendCallOnlyAddress: multisendCallOnlyAddress || '',
-        // Fill in other required addresses
-        fallbackHandlerAddress: "", // Example address
-        signMessageLibAddress: "", // Example address
-        createCallAddress: "", // Example address
-        simulateTxAccessorAddress: "" // Example address
+  // If multisend addresses are defined and not empty strings, use the extended configuration
+  if (multisendAddress && multisendAddress !== '' &&
+    multisendCallOnlyAddress && multisendCallOnlyAddress !== '') {
+    return Safe.create({
+      ethAdapter,
+      safeAddress: address,
+      isL1SafeMasterCopy,
+      contractNetworks: {
+        [chainId]: {
+          // Required contract addresses
+          safeMasterCopyAddress: implementation,
+          safeProxyFactoryAddress: "", // Use appropriate address
+          multiSendAddress: multisendAddress,
+          multiSendCallOnlyAddress: multisendCallOnlyAddress,
+          // Fill in other required addresses
+          fallbackHandlerAddress: "", // Example address
+          signMessageLibAddress: "", // Example address
+          createCallAddress: "", // Example address
+          simulateTxAccessorAddress: "" // Example address
+        }
       }
-    }
-  })
+    })
+  } else {
+    // Otherwise, use the simpler configuration
+    return Safe.create({
+      ethAdapter: ethAdapter, // Using the already created ethAdapter
+      safeAddress: address,
+      isL1SafeMasterCopy,
+    })
+  }
 }
 
 // defaultContracts = {
