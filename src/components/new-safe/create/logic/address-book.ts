@@ -10,6 +10,8 @@ export const updateAddressBook = (
   name: string,
   owners: NamedAddress[],
   threshold: number,
+  multisendAddress?: string,
+  multisendCallOnlyAddress?: string,
 ): AppThunk => {
   return (dispatch) => {
     dispatch(
@@ -39,6 +41,8 @@ export const updateAddressBook = (
           })),
           chainId: chainId,
           nonce: 0,
+          multisendAddress: multisendAddress ? { value: multisendAddress } : null,
+          multisendCallOnlyAddress: multisendCallOnlyAddress ? { value: multisendCallOnlyAddress } : null,
         },
       }),
     )

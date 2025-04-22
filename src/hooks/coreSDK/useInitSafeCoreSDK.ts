@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { initSafeSDK, setSafeImplementation, setSafeSDK } from '@/hooks/coreSDK/safeCoreSDK'
 import { trackError } from '@/services/exceptions'
 import ErrorCodes from '@/services/exceptions/ErrorCodes'
-import { useAppDispatch } from '@/store'
+import { useAppDispatch, useAppSelector } from '@/store'
 import { showNotification } from '@/store/notificationsSlice'
 import { useMultiWeb3ReadOnly } from '@/hooks/wallets/web3'
 import { asError } from '@/services/exceptions/utils'
@@ -12,6 +12,7 @@ import type Safe from '@safe-global/protocol-kit'
 import type { Provider } from '@ethersproject/providers'
 import { ethers } from 'ethers'
 import useChainId from '@/hooks/useChainId'
+import { selectAddedSafes } from '@/store/addedSafesSlice'
 
 export const getSafeImplementation = async (web3: Provider, safeAddress: string, chainId: string) => {
   return web3
@@ -66,6 +67,11 @@ export const useInitSafeCoreSDK = () => {
   const address = useSafeAddress()
   const chainId = useChainId()
 
+  const addedSafes = useAppSelector((state) => selectAddedSafes(state, chainId))
+  const multisendAddress = address ? addedSafes?.[address]?.multisendAddress?.value : undefined
+  const multisendCallOnlyAddress = address ? addedSafes?.[address]?.multisendCallOnlyAddress?.value : undefined
+
+
   useEffect(() => {
     if (!web3ReadOnly || !address || !chainId) {
       // If we don't reset the SDK, a previous Safe could remain in the store
@@ -89,6 +95,8 @@ export const useInitSafeCoreSDK = () => {
           chainId,
           address,
           implementation,
+          multisendAddress,
+          multisendCallOnlyAddress,
         })
       })
       .then(setSafeSDK)

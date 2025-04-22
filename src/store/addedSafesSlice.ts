@@ -12,7 +12,9 @@ export type AddedSafesOnChain = {
   [safeAddress: string]: {
     owners: AddressEx[]
     threshold: number
-    ethBalance?: string
+    ethBalance?: string,
+    multisendAddress?: AddressEx | null
+    multisendCallOnlyAddress?: AddressEx | null
   }
 }
 
@@ -40,7 +42,7 @@ export const addedSafesSlice = createSlice({
       return action.payload
     },
     addOrUpdateSafe: (state, { payload }: PayloadAction<{ safe: SafeInfo }>) => {
-      const { chainId, address, owners, threshold } = payload.safe
+      const { chainId, address, owners, threshold, multisendAddress, multisendCallOnlyAddress } = payload.safe
 
       state[chainId] ??= {}
       state[chainId][address.value] = {
@@ -48,6 +50,8 @@ export const addedSafesSlice = createSlice({
         ...(state[chainId][address.value] ?? {}),
         owners,
         threshold,
+        multisendAddress,
+        multisendCallOnlyAddress,
       }
     },
     updateAddedSafeBalance: (
