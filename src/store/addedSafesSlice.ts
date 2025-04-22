@@ -12,7 +12,7 @@ export type AddedSafesOnChain = {
   [safeAddress: string]: {
     owners: AddressEx[]
     threshold: number
-    ethBalance?: string,
+    ethBalance?: string
     multisendAddress?: AddressEx | null
     multisendCallOnlyAddress?: AddressEx | null
   }
