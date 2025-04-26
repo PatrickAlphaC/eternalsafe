@@ -112,23 +112,14 @@ const SafeReviewStep = ({ data, onBack }: StepRenderProps<LoadSafeFormData>) => 
             }
           />
           {data.multisendAddress && (
-            <ReviewRow
-              name="Multisend Address"
-              value={
-                <Typography>
-                  {data.multisendAddress}
-                </Typography>
-              }
-            />)}
+            <ReviewRow name="Multisend Address" value={<Typography>{data.multisendAddress}</Typography>} />
+          )}
           {data.multisendCallOnlyAddress && (
             <ReviewRow
               name="MultisendCallOnly Address"
-              value={
-                <Typography>
-                  {data.multisendCallOnlyAddress}
-                </Typography>
-              }
-            />)}
+              value={<Typography>{data.multisendCallOnlyAddress}</Typography>}
+            />
+          )}
         </Grid>
       </Box>
       <Divider />
