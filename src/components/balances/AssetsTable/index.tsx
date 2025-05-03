@@ -115,63 +115,63 @@ const AssetsTable = (): ReactElement => {
   const rows = loading
     ? skeletonRows
     : balances.map((item) => {
-      const isNative = isNativeToken(item.tokenInfo)
+        const isNative = isNativeToken(item.tokenInfo)
 
-      return {
-        key: item.tokenInfo.address,
-        collapsed: item.tokenInfo.address === removingToken,
-        cells: {
-          asset: {
-            rawValue: item.tokenInfo.name,
-            collapsed: item.tokenInfo.address === removingToken,
-            content: (
-              <div className={css.token}>
-                <TokenIcon logoUri={item.tokenInfo.logoUri} tokenSymbol={item.tokenInfo.symbol} />
+        return {
+          key: item.tokenInfo.address,
+          collapsed: item.tokenInfo.address === removingToken,
+          cells: {
+            asset: {
+              rawValue: item.tokenInfo.name,
+              collapsed: item.tokenInfo.address === removingToken,
+              content: (
+                <div className={css.token}>
+                  <TokenIcon logoUri={item.tokenInfo.logoUri} tokenSymbol={item.tokenInfo.symbol} />
 
-                <Typography>{item.tokenInfo.name}</Typography>
+                  <Typography>{item.tokenInfo.name}</Typography>
 
-                {!isNative && <TokenExplorerLink address={item.tokenInfo.address} />}
-              </div>
-            ),
+                  {!isNative && <TokenExplorerLink address={item.tokenInfo.address} />}
+                </div>
+              ),
+            },
+            balance: {
+              rawValue: Number(item.balance) / 10 ** item.tokenInfo.decimals,
+              collapsed: item.tokenInfo.address === removingToken,
+              content: (
+                <TokenAmount
+                  value={item.balance}
+                  decimals={item.tokenInfo.decimals}
+                  tokenSymbol={item.tokenInfo.symbol}
+                />
+              ),
+            },
+            actions: {
+              rawValue: '',
+              sticky: true,
+              collapsed: item.tokenInfo.address === removingToken,
+              content: (
+                <Box display="flex" flexDirection="row" gap={1} alignItems="center">
+                  <>
+                    <SendButton tokenInfo={item.tokenInfo} onClick={() => onSendClick(item.tokenInfo.address)} />
+
+                    {item.custom && (
+                      <Tooltip title="Hide asset (you will have to re-add it)" arrow disableInteractive>
+                        <IconButton
+                          disabled={removingToken !== undefined}
+                          size="medium"
+                          onClick={() => removeToken(item.tokenInfo.address)}
+                        >
+                          <VisibilityOutlined fontSize="small" />
+                        </IconButton>
+                      </Tooltip>
+                    )}
+                  </>
+                </Box>
+              ),
+            },
           },
-          balance: {
-            rawValue: Number(item.balance) / 10 ** item.tokenInfo.decimals,
-            collapsed: item.tokenInfo.address === removingToken,
-            content: (
-              <TokenAmount
-                value={item.balance}
-                decimals={item.tokenInfo.decimals}
-                tokenSymbol={item.tokenInfo.symbol}
-              />
-            ),
-          },
-          actions: {
-            rawValue: '',
-            sticky: true,
-            collapsed: item.tokenInfo.address === removingToken,
-            content: (
-              <Box display="flex" flexDirection="row" gap={1} alignItems="center">
-                <>
-                  <SendButton tokenInfo={item.tokenInfo} onClick={() => onSendClick(item.tokenInfo.address)} />
-
-                  {item.custom && (
-                    <Tooltip title="Hide asset (you will have to re-add it)" arrow disableInteractive>
-                      <IconButton
-                        disabled={removingToken !== undefined}
-                        size="medium"
-                        onClick={() => removeToken(item.tokenInfo.address)}
-                      >
-                        <VisibilityOutlined fontSize="small" />
-                      </IconButton>
-                    </Tooltip>
-                  )}
-                </>
-              </Box>
-            ),
-          },
-        },
-      }
-    })
+        }
+      })
 
   return (
     <>
