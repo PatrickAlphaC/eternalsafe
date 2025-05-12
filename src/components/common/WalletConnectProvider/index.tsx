@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, type ReactElement, type ReactNode } from 'react'
 import useWalletConnect, { type WalletConnectHook } from '@/hooks/wallets/useWalletConnect'
-import WalletKit from '@reown/walletkit'
+import type WalletKit from '@reown/walletkit'
 
 export const WalletConnectContext = createContext<WalletConnectHook | null>(null)
 

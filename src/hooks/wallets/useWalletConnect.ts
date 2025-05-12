@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useRef, Dispatch, SetStateAction } from 'react'
+import { useEffect, useState, useCallback, useRef, type Dispatch, type SetStateAction } from 'react'
 import { Core } from '@walletconnect/core'
 import { WalletKit } from '@reown/walletkit'
 import type { SessionTypes } from '@walletconnect/types'
@@ -7,7 +7,7 @@ import { useAppSelector } from '@/store'
 import { selectWalletConnectApiKey, selectWalletConnectPairingCode } from '@/store/settingsSlice'
 import useSafeInfo from '@/hooks/useSafeInfo'
 import useChainId from '../useChainId'
-import { WalletKit as WalletKitType } from '@reown/walletkit/dist/types/client'
+import type { WalletKit as WalletKitType } from '@reown/walletkit/dist/types/client'
 
 export type SessionProposal = {
   id: number

@@ -7,7 +7,7 @@ import SafeTxProvider, { SafeTxContext } from '@/components/tx-flow/SafeTxProvid
 import SignOrExecuteForm from '@/components/tx/SignOrExecuteForm'
 import PageHeader from '@/components/common/PageHeader'
 import { AppRoutes } from '@/config/routes'
-import { TransactionDetails, TransactionInfoType } from '@safe-global/safe-gateway-typescript-sdk'
+import type { TransactionDetails } from '@safe-global/safe-gateway-typescript-sdk'
 import { extractTxDetails } from '@/services/tx/extractTxInfo'
 import useSafeInfo from '@/hooks/useSafeInfo'
 
@@ -53,7 +53,7 @@ const WalletConnectTxContent = () => {
     if (safeTx) {
       extractTxDetails(safeAddress, safeTx, safe).then(setTxDetails)
     }
-  }, [safeTx])
+  }, [safeAddress, safeTx, safe])
 
   const redirectToOriginalPage = () => {
     router.push({
