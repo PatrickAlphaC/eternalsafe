@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import {
   Button,
   TextField,
@@ -18,11 +18,11 @@ import {
   Paper,
 } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
-import { useRouter } from 'next/router'
 import { useAppDispatch, useAppSelector } from '@/store'
 import { selectWalletConnectApiKey, setWalletConnectPairingCode, setWalletConnectApiKey } from '@/store/settingsSlice'
 import { useWalletConnectContext } from '@/components/common/WalletConnectProvider'
-import useWallet from '@/hooks/wallets/useWallet'
+import useChainId from '@/hooks/useChainId'
+import useSafeInfo from '@/hooks/useSafeInfo'
 
 type WalletConnectPairingModalProps = {
   open: boolean
@@ -34,9 +34,9 @@ const WalletConnectPairingModal = ({ open, onClose, anchorEl }: WalletConnectPai
   const [pairingCode, setPairingCode] = useState('')
   const [apiKeyInput, setApiKeyInput] = useState('')
   const [activeTab, setActiveTab] = useState(0)
-  const router = useRouter()
   const dispatch = useAppDispatch()
-  const wallet = useWallet()
+  const { safeAddress } = useSafeInfo()
+  const chainId = useChainId()
   const walletConnectApiKey = useAppSelector(selectWalletConnectApiKey)
   const envApiKey = (typeof process !== 'undefined' && process.env.WC_PROJECT_ID) || ''
   const isApiKeySet = !!walletConnectApiKey
@@ -74,34 +74,36 @@ const WalletConnectPairingModal = ({ open, onClose, anchorEl }: WalletConnectPai
     }
   }
 
-  const handleApproveSession = async () => {
-    if (!pendingProposal) return
+  const handleApproveSession = useCallback(async () => {
+    if (!pendingProposal || !safeAddress) return
+
     try {
       const { requiredNamespaces } = pendingProposal.params
       const namespaces: Record<string, any> = {}
       Object.entries(requiredNamespaces).forEach(([key, value]) => {
-        const chains = value.chains || []
-        const walletAddress = wallet?.address || ''
-        const accounts = chains.map((chain) => `${chain}:${walletAddress}`)
+        const chains = value.chains || [`eip155:${chainId}`]
+        const accounts = chains.map((chain) => `${chain}:${safeAddress}`)
         namespaces[key] = {
           accounts,
           methods: value.methods,
           events: value.events,
+          chains,
         }
       })
-      await approveSession(namespaces)
+      await approveSession(pendingProposal.id, namespaces)
     } catch (e) {
       console.error('Failed to approve session:', e)
     }
-  }
+  }, [approveSession, pendingProposal, chainId, safeAddress])
 
-  const handleRejectSession = async () => {
+  const handleRejectSession = useCallback(async () => {
+    if (!pendingProposal) return
     try {
-      await rejectSession()
+      await rejectSession(pendingProposal.id)
     } catch (e) {
       console.error('Failed to reject session:', e)
     }
-  }
+  }, [rejectSession, pendingProposal])
 
   const handleDisconnectSession = async (topic: string) => {
     try {

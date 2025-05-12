@@ -70,8 +70,8 @@ export type WalletConnectHook = {
   pendingRequest: SessionRequest | null
   error: Error | null
   pair: (uri: string) => Promise<void>
-  approveSession: (namespaces: Record<string, any>) => Promise<SessionTypes.Struct>
-  rejectSession: () => Promise<void>
+  approveSession: (id: number, namespaces: Record<string, any>) => Promise<SessionTypes.Struct>
+  rejectSession: (id: number) => Promise<void>
   approveRequest: (result: any) => Promise<void>
   rejectRequest: (reason?: string) => Promise<void>
   disconnectSession: (topic: string) => Promise<void>
@@ -84,6 +84,7 @@ const useWalletConnect = (
 ): WalletConnectHook => {
   const projectId = useAppSelector(selectWalletConnectApiKey)
   const pairingCode = useAppSelector(selectWalletConnectPairingCode)
+  // TODO(eternalsafe): When the safeAddress and chainId change, we need to update the approved namespaces in the session, or maybe easier to just start a new session
   const { safeAddress } = useSafeInfo()
   const chainId = useChainId()
 
@@ -250,8 +251,7 @@ const useWalletConnect = (
 
   // Approve a session proposal
   const approveSession = useCallback(
-    async (namespaces: Record<string, any>) => {
-      console.log({ namespaces })
+    async (id: number, namespaces: Record<string, any>) => {
       if (!walletKitInstance || !isInitialized) {
         throw new Error('WalletKit not initialized')
       }
@@ -269,8 +269,8 @@ const useWalletConnect = (
           // TODO(eternalsafe): Add all supported chains
           approvedNamespaces = {
             eip155: {
-              chains: ['eip155:1', 'eip155:11155111'],
-              methods: ['eth_sendTransaction', 'personal_sign'],
+              chains: [`eip155:${chainId}`],
+              methods: ['eth_sendTransaction'],
               events: ['accountsChanged', 'chainChanged'],
               accounts: [`eip155:${chainId}:${safeAddress}`],
             },
@@ -279,7 +279,7 @@ const useWalletConnect = (
 
         // Approve the session with the built namespaces
         const session = await walletKitInstance.approveSession({
-          id: pendingProposalRef.current.id,
+          id,
           namespaces: approvedNamespaces,
         })
 
@@ -293,7 +293,7 @@ const useWalletConnect = (
 
         // Reject the session on error
         await walletKitInstance.rejectSession({
-          id: pendingProposalRef.current.id,
+          id,
           reason: getSdkError('USER_REJECTED'),
         })
 
@@ -306,31 +306,34 @@ const useWalletConnect = (
   )
 
   // Reject a session proposal
-  const rejectSession = useCallback(async () => {
-    if (!walletKitInstance || !isInitialized) {
-      throw new Error('WalletKit not initialized')
-    }
+  const rejectSession = useCallback(
+    async (id: number) => {
+      if (!walletKitInstance || !isInitialized) {
+        throw new Error('WalletKit not initialized')
+      }
 
-    if (!pendingProposalRef.current) {
-      throw new Error('No pending session proposal')
-    }
+      if (!pendingProposalRef.current) {
+        throw new Error('No pending session proposal')
+      }
 
-    try {
-      await walletKitInstance.rejectSession({
-        id: pendingProposalRef.current.id,
-        reason: getSdkError('USER_REJECTED'),
-      })
+      try {
+        await walletKitInstance.rejectSession({
+          id,
+          reason: getSdkError('USER_REJECTED'),
+        })
 
-      setPendingProposal(null)
-    } catch (e) {
-      console.error('Failed to reject session:', e)
-      setError(e instanceof Error ? e : new Error('Failed to reject session'))
+        setPendingProposal(null)
+      } catch (e) {
+        console.error('Failed to reject session:', e)
+        setError(e instanceof Error ? e : new Error('Failed to reject session'))
 
-      setPendingProposal(null)
+        setPendingProposal(null)
 
-      throw e
-    }
-  }, [isInitialized])
+        throw e
+      }
+    },
+    [isInitialized],
+  )
 
   // Approve a session request
   const approveRequest = useCallback(

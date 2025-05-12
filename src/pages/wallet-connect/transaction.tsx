@@ -1,4 +1,4 @@
-import React, { useEffect, useContext } from 'react'
+import React, { useEffect, useContext, useState } from 'react'
 import { useRouter } from 'next/router'
 import { Box, Button } from '@mui/material'
 import { useWalletConnectContext } from '@/components/common/WalletConnectProvider'
@@ -7,53 +7,57 @@ import SafeTxProvider, { SafeTxContext } from '@/components/tx-flow/SafeTxProvid
 import SignOrExecuteForm from '@/components/tx/SignOrExecuteForm'
 import PageHeader from '@/components/common/PageHeader'
 import { AppRoutes } from '@/config/routes'
+import { TransactionDetails, TransactionInfoType } from '@safe-global/safe-gateway-typescript-sdk'
+import { extractTxDetails } from '@/services/tx/extractTxInfo'
+import useSafeInfo from '@/hooks/useSafeInfo'
 
 const WalletConnectTxContent = () => {
   const router = useRouter()
   const { pendingRequest, approveRequest, rejectRequest } = useWalletConnectContext()
-  const { setSafeTx, setSafeTxError, safeTx, safeTxError } = useContext(SafeTxContext)
+  const { setSafeTx, setSafeTxError, safeTx } = useContext(SafeTxContext)
+  const [txDetails, setTxDetails] = useState<TransactionDetails | undefined>(undefined)
+  const { safe, safeAddress } = useSafeInfo()
 
   useEffect(() => {
     if (!pendingRequest || pendingRequest.params.request.method !== 'eth_sendTransaction') {
       router.push({
-        pathname: AppRoutes.index,
+        pathname: AppRoutes.balances.index,
         query: router.query,
       })
     }
   }, [pendingRequest, router])
 
   useEffect(() => {
-    const createSafeTx = async () => {
-      if (!pendingRequest || pendingRequest.params.request.method !== 'eth_sendTransaction') {
-        return
-      }
-
-      try {
-        const txParams = pendingRequest.params.request.params[0]
-        if (!txParams) {
-          throw new Error('No transaction parameters provided')
-        }
-
-        const tx = await createTx({
-          to: txParams.to,
-          value: txParams.value || '0',
-          data: txParams.data || '0x',
-          operation: 0, // Call
-        })
-
-        setSafeTx(tx)
-      } catch (err) {
-        console.error('Failed to create SafeTransaction:', err)
-        setSafeTxError(err instanceof Error ? err : new Error('Failed to create transaction'))
-      }
+    if (!pendingRequest || pendingRequest.params.request.method !== 'eth_sendTransaction') {
+      return
     }
 
-    createSafeTx()
+    const txParams = pendingRequest.params.request.params[0]
+    if (!txParams) {
+      setSafeTxError(new Error('Failed to create transaction from WalletConnect request'))
+      return
+    }
+
+    // TODO(eternalsafe): for some reason not all transaction details are being shown, e.g. 'value' and 'to'
+    createTx({
+      to: txParams.to,
+      value: txParams.value || '0',
+      data: txParams.data || '0x',
+      operation: 0, // Call
+    })
+      .then(setSafeTx)
+      .catch(setSafeTxError)
   }, [pendingRequest, setSafeTx, setSafeTxError])
+
+  useEffect(() => {
+    if (safeTx) {
+      extractTxDetails(safeAddress, safeTx, safe).then(setTxDetails)
+    }
+  }, [safeTx])
 
   const redirectToOriginalPage = () => {
     router.push({
-      pathname: AppRoutes.index,
+      pathname: AppRoutes.balances.index,
       query: router.query,
     })
   }
@@ -111,7 +115,7 @@ const WalletConnectTxContent = () => {
 
       <main>
         <Box sx={{ p: 3 }}>
-          <SignOrExecuteForm onSubmit={handleSubmit} isCreation />
+          <SignOrExecuteForm onSubmit={handleSubmit} isCreation txDetails={txDetails} />
           <Box sx={{ mt: 2, display: 'flex', justifyContent: 'center' }}>
             <Button variant="contained" color="error" onClick={handleReject} sx={{ minWidth: '200px' }}>
               Reject Transaction
@@ -124,8 +128,6 @@ const WalletConnectTxContent = () => {
 }
 
 const WalletConnectTransactionPage = () => {
-  const router = useRouter()
-
   return (
     <SafeTxProvider>
       <WalletConnectTxContent />
