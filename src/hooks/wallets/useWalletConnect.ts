@@ -266,7 +266,6 @@ const useWalletConnect = (
 
         if (Object.keys(namespaces).length === 0) {
           // Create a custom namespaces object directly
-          // TODO(eternalsafe): Add all supported chains
           approvedNamespaces = {
             eip155: {
               chains: [`eip155:${chainId}`],

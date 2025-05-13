@@ -46,6 +46,7 @@ export const useLoadTxHistory = (): AsyncResult<TxHistory> => {
   const { safe, safeAddress } = useSafeInfo()
   const { chainId } = safe
   const [pollCount, resetPolling] = useIntervalCounter(POLLING_INTERVAL)
+  // TODO(eternalsafe): finish implementing batched loading of tx history
   // const [lastBlockQueried, setLastBlockQueried] = useState<number | undefined>()
 
   // useEffect(() => {
@@ -60,8 +61,7 @@ export const useLoadTxHistory = (): AsyncResult<TxHistory> => {
 
       if (!safeContract) return
 
-      // TODO(eternalsafe): set this back to 'latest'
-      const logs = await safeContract.queryFilter(safeContract.filters.ExecutionSuccess(), 0, 1000)
+      const logs = await safeContract.queryFilter(safeContract.filters.ExecutionSuccess(), 0, 'latest')
 
       let txs = await Promise.all(
         logs.map(async (log, i) => {
