@@ -17,7 +17,7 @@ import { useAppDispatch } from '@/store'
 import { removeChain } from '@/store/customChainsSlice'
 import { showNotification } from '@/store/notificationsSlice'
 
-const keepPathRoutes = [AppRoutes.welcome.index, AppRoutes.newSafe.load]
+const keepPathRoutes = [AppRoutes.welcome.index, AppRoutes.newSafe.load, AppRoutes.newSafe.create]
 
 // Define the route for custom chain page in the pages directory
 const CUSTOM_CHAIN_ROUTE = '/customChain'

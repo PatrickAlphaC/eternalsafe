@@ -9,6 +9,7 @@ import { CHAINLIST_URL } from '@/config/constants'
 import { useEffect, useState } from 'react'
 import { useWeb3 } from '@/hooks/wallets/web3'
 import { DataWidget } from '../SafeListDrawer/DataWidget'
+import NewSafe from './NewSafe'
 
 const WelcomeLogin = () => {
   const web3 = useWeb3()
@@ -36,44 +37,51 @@ const WelcomeLogin = () => {
         {(web3 || customRpcUrl) && !forceShowRpcInput ? (
           <>
             <Typography mb={2} textAlign="center">
-              Eternal Safe does not yet support creating a Safe, you must have one already created.
+              Create a new Safe or load an existing one.
             </Typography>
+<<<<<<< HEAD
             <LoadSafe />
             <DataWidget />
-            {/* TODO(eternalsafe): Allow import of data here */}
+=======
+            <Box display="flex" flexDirection="column" gap={2}>
+              <LoadSafe />
+              <NewSafe />
+            </Box>
+>>>>>>> 1b3b97c8 (Feat/safe creation (#62))
+  {/* TODO(eternalsafe): Allow import of data here */ }
           </>
         ) : chain ? (
-          <>
-            <Typography textAlign="center">
-              To get started you must connect a wallet on {chain.chainName} or provide a RPC URL for the{' '}
-              {chain.chainName} network.
-              <br />
-              <br />
-              For best performance we recommend using a private RPC URL. Public URLs can be found on{' '}
-              <Link href={`${CHAINLIST_URL}chain/${chain.chainId}`} color="primary" target="_blank" rel="noreferrer">
-                Chainlist
-              </Link>{' '}
-              however they may be rate limited or have other restrictions.
-              <br />
-              <br />
-              You can change this later in the settings.
-            </Typography>
-            <LoadRPCUrl hideRpcInput={() => setForceShowRpcInput(false)} />
-            <DataWidget />
-          </>
-        ) : (
-          <Typography mb={2} textAlign="center">
-            Please select a network from the dropdown above to get started.
-          </Typography>
-        )}
+  <>
+    <Typography textAlign="center">
+      To get started you must connect a wallet on {chain.chainName} or provide a RPC URL for the{' '}
+      {chain.chainName} network.
+      <br />
+      <br />
+      For best performance we recommend using a private RPC URL. Public URLs can be found on{' '}
+      <Link href={`${CHAINLIST_URL}chain/${chain.chainId}`} color="primary" target="_blank" rel="noreferrer">
+        Chainlist
+      </Link>{' '}
+      however they may be rate limited or have other restrictions.
+      <br />
+      <br />
+      You can change this later in the settings.
+    </Typography>
+    <LoadRPCUrl hideRpcInput={() => setForceShowRpcInput(false)} />
+    <DataWidget />
+  </>
+) : (
+  <Typography mb={2} textAlign="center">
+    Please select a network from the dropdown above to get started.
+  </Typography>
+)}
 
-        <Typography variant="subtitle2" textAlign="center" mt="auto" pt={3}>
-          <Link type="button" component="button" onClick={toggleShowRpcInput} color="primary">
-            {forceShowRpcInput ? 'Close' : 'Open'} RPC URL input
-          </Link>
-        </Typography>
-      </Box>
-    </Paper>
+<Typography variant="subtitle2" textAlign="center" mt="auto" pt={3}>
+  <Link type="button" component="button" onClick={toggleShowRpcInput} color="primary">
+    {forceShowRpcInput ? 'Close' : 'Open'} RPC URL input
+  </Link>
+</Typography>
+      </Box >
+    </Paper >
   )
 }
 
