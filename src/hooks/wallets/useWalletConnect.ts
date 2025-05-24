@@ -229,7 +229,7 @@ const useWalletConnect = (
     }
 
     initWalletKit()
-  }, [projectId, isInitialized, isInitializing, pairingCode, setupEventListeners])
+  }, [projectId, isInitialized, isInitializing, pairingCode, setupEventListeners, setWalletKitInstance])
 
   // Pair with a dApp
   const pair = useCallback(
@@ -246,7 +246,7 @@ const useWalletConnect = (
         throw e
       }
     },
-    [isInitialized],
+    [isInitialized, walletKitInstance],
   )
 
   // Approve a session proposal
@@ -301,7 +301,7 @@ const useWalletConnect = (
         throw error
       }
     },
-    [isInitialized, safeAddress, chainId],
+    [walletKitInstance, isInitialized, chainId, safeAddress],
   )
 
   // Reject a session proposal
@@ -331,7 +331,7 @@ const useWalletConnect = (
         throw e
       }
     },
-    [isInitialized],
+    [isInitialized, walletKitInstance],
   )
 
   // Approve a session request
@@ -364,7 +364,7 @@ const useWalletConnect = (
         throw e
       }
     },
-    [isInitialized],
+    [isInitialized, walletKitInstance],
   )
 
   // Reject a session request
@@ -400,7 +400,7 @@ const useWalletConnect = (
         throw e
       }
     },
-    [isInitialized],
+    [isInitialized, walletKitInstance],
   )
 
   // Disconnect a session
@@ -423,7 +423,7 @@ const useWalletConnect = (
         throw e
       }
     },
-    [isInitialized],
+    [isInitialized, walletKitInstance],
   )
 
   // Update a session
@@ -456,7 +456,7 @@ const useWalletConnect = (
         throw e
       }
     },
-    [isInitialized],
+    [isInitialized, walletKitInstance],
   )
 
   return {
