@@ -156,7 +156,13 @@ export const pollSafeInfo = async (
       if (!safeAddress) {
         throw new Error('Safe address not found in transaction receipt')
       }
-      let [sdk, implementation] = await getSafeSDKAndImplementation(web3, safeAddress, chainId, multiSendAddress, multisendCallOnlyAddress)
+      let [sdk, implementation] = await getSafeSDKAndImplementation(
+        web3,
+        safeAddress,
+        chainId,
+        multiSendAddress,
+        multisendCallOnlyAddress,
+      )
       if (!sdk) {
         throw new Error('Safe SDK not available')
       }

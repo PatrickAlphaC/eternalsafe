@@ -49,7 +49,7 @@ export const addedSafesSlice = createSlice({
       const { chainId, address, owners, threshold, multisendAddress, multisendCallOnlyAddress } = payload.safe
 
       state[chainId] ??= {}
-      const existingData = state[chainId][address.value] ?? {};
+      const existingData = state[chainId][address.value] ?? {}
 
       state[chainId][address.value] = {
         // Keep balance

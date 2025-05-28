@@ -45,7 +45,7 @@ const useSafeCreationEffects = ({
     status,
     setStatus,
     setPendingSafe,
-    pendingSafe
+    pendingSafe,
   ])
 
   // Warn about leaving the page before Safe creation

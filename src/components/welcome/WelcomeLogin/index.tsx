@@ -77,8 +77,8 @@ const WelcomeLogin = () => {
             {forceShowRpcInput ? 'Close' : 'Open'} RPC URL input
           </Link>
         </Typography>
-      </Box >
-    </Paper >
+      </Box>
+    </Paper>
   )
 }
 
