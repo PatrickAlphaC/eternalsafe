@@ -46,6 +46,12 @@ export const useLoadTxHistory = (): AsyncResult<TxHistory> => {
   const { safe, safeAddress } = useSafeInfo()
   const { chainId } = safe
   const [pollCount, resetPolling] = useIntervalCounter(POLLING_INTERVAL)
+  // TODO(eternalsafe): finish implementing batched loading of tx history
+  // const [lastBlockQueried, setLastBlockQueried] = useState<number | undefined>()
+
+  // useEffect(() => {
+  //   setLastBlockQueried(undefined)
+  // }, [safeAddress])
 
   const [data, error, loading] = useAsync<TxHistory | undefined>(
     async () => {
