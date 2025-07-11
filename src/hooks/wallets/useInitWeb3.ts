@@ -107,6 +107,7 @@ export const useInitWeb3 = () => {
           })
       }
 
+      }
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [customRpcUrl, chain, wallet, chainId, router, dispatch])
 }
